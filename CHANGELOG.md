@@ -2,6 +2,17 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v7.0.0 - Fifteen cases linked across the five portals
+- Ten new synthetic provider cases (CLM-24201 to CLM-24210) join the original five, covering all four paths (corrected claim, evidence, appeal, coverage update) and stages from triage to a reopened case
+- Patient portal: statements, claims status and balances now come from the linked cases (Alex Morgan, Riley Morgan, Sam Okoye). A patient payment clears the provider's closure blocker; a patient dispute blocks closure
+- Payer portal: claim adjudication, records requests and appeals work on every live case; retrospective authorization PR-4 supplies the authorization number for CLM-24206; eligibility inquiries E-5 and E-6 write to their cases
+- Clearinghouse: the claim batch and the 835 files (including a missing and a duplicate file) come from the cases
+- Platform: audit trail entries, AI outputs and compliance samples for the new cases
+- Provider: the stage-4 "Simulate payer response" step is replaced by an "Open the payer portal" step; the payer decides
+- Appeal builder fix-it options now use each case's own sourced facts
+- Landing page, dashboard test bench and README updated; process maps footer updated
+- Rollback: `git checkout v0.6.4 -- index.html`
+
 ## v0.6.4 - README
 - README rewritten for the five-portal platform, with the two live links, a portal summary and the version history
 - The product (index.html) and process maps are unchanged in this release

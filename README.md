@@ -6,7 +6,7 @@ A meridian is a shared reference line. Here the claim and its history are that l
 
 **All data is synthetic.** Nothing here connects to a real EHR, payer, clearinghouse or bank.
 
-**Current version: v0.6.4** (see [Version history](#version-history))
+**Current version: v7.0.0** (see [Version history](#version-history))
 
 ## Live links
 
@@ -37,15 +37,25 @@ Behavior that is built, not just drawn:
 - A shared audit trail whose entries are chained, so edits are detectable
 - AI switches per workflow (automatic, suggestion only, off), and downtime shared between the clearinghouse and the platform
 
-Five synthetic cases run the whole loop:
+Fifteen synthetic cases run the whole loop and are linked across all five portals:
 
-| Case | Path |
-|---|---|
-| CLM-24017 | Appeal (the draft has an unsupported statement that blocks approval) |
-| CLM-24033 | Corrected claim |
-| CLM-24051 | Request for evidence |
-| CLM-24068 | Coverage update (coordination of benefits) |
-| CLM-23988 | Completed example with a service-line trace |
+| Case | Path | Starts at | Links to the other portals |
+|---|---|---|---|
+| CLM-24017 | Appeal (the draft has an unsupported statement that blocks approval) | Action drafted | Payer: appeals |
+| CLM-24033 | Corrected claim | Triaged | Payer: claim adjudication; payer audit AU-201 |
+| CLM-24051 | Request for evidence | Triaged | Payer: records requests |
+| CLM-24068 | Coverage update (coordination of benefits) | Triaged | Payer: eligibility |
+| CLM-23988 | Completed example with a service-line trace | Reconciled | |
+| CLM-24201 | Corrected claim (taxonomy code), patient Alex Morgan | Triaged | Patient: statement appears once the payer pays; clearinghouse rejection |
+| CLM-24202 | Evidence request (MRI knee), patient Alex Morgan | Deposit allocated | Patient: pays the $800 deductible, which clears the closure blocker; clearinghouse: 835 not delivered |
+| CLM-24203 | Coordination of benefits, patient Riley Morgan (guardian Jamie) | Payer responded | Payer: eligibility inquiry E-6; patient: proxy and statement; clearinghouse: duplicate 835 |
+| CLM-24204 | Coverage ended, patient Sam Okoye becomes self-pay | Payer responded | Payer: eligibility inquiry E-5; patient: $1,325 balance, good faith estimate and dispute |
+| CLM-24205 | Appeal with an unsupported statement (knee arthroscopy) | Action drafted | Platform: AI governance and compliance sample |
+| CLM-24206 | Evidence request, authorization missing | Triaged | Payer: retrospective authorization PR-4 supplies the number |
+| CLM-24207 | Corrected claim, reopened by a $420 payer recoupment | Reconciled, reopened | Payer: payment integrity; platform audit trail |
+| CLM-24208 | Appeal (sleep study), all statements sourced | Sent | Payer: appeals decision |
+| CLM-24209 | Evidence request (MRI lumbar), packet complete | Sent | Payer: records requests |
+| CLM-24210 | Corrected claim (Payer C taxonomy rule change) | Sent | Payer: claim adjudication; clearinghouse rejection monitoring |
 
 ## Process maps
 
@@ -61,6 +71,7 @@ Every release is a git tag. Details and rollback steps for each are in [CHANGELO
 
 | Tag | What changed |
 |---|---|
+| v7.0.0 | Ten new cases (fifteen in all) linked across the provider, patient, payer, clearinghouse and platform portals |
 | v0.6.4 | README updated with live links and version history |
 | v0.6.3 | GitHub Pages deployment for the prototype and the process maps |
 | v0.6.2 | Process maps added |
