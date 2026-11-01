@@ -2,6 +2,14 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v0.6.1 - Two-step sign-in, new landing page, polish
+- Sign-in is now two steps: first choose a portal (5 cards with who uses it, what they do, role and workflow counts, sign-in method), then choose a role; "Change portal" returns to step 1
+- Landing page rewritten for the five-portal platform: portal cards, three loops, updated scope; landing buttons open the portal step
+- Claim adjudication: the denial-code and allowed-amount fields appear only when Deny or Pay in part is chosen
+- Proxy access: the proxy list is full width and permission buttons no longer wrap
+- Audit trail: new entries advance the clock, so timestamps differ
+- Rollback: `git checkout v0.6.0 -- index.html`
+
 ## v0.6.0 - Four more portals and the last 3 provider roles
 - Provider: 3 new roles (Practice administrator or CFO, Privacy officer, Provider system administrator) with a new section "Leadership, privacy and administration" (Financial health, Cash forecast, Access review, Disclosures, Users and roles, Integrations, Rules) and a Patient requests tab in Patient finance
 - Patient portal, PP01 to PP09: book/reschedule/cancel, intake and consents, insurance and ID, estimate and payment option, pay and plan, questions and disputes, financial assistance, proxy access, statements and receipts (3 patient roles)
