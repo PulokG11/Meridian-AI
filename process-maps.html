@@ -1,0 +1,261 @@
+<title>Meridian Process Maps</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one map per tab, swimlanes by who acts, steps flow left to right, click a step for detail */
+:root{--bg:#F5F7FA;--surface:#FFFFFF;--line:#D7DEE8;--fg:#15202E;--fg2:#4A5A6E;--fg3:#74839A;--brand:#0F7F70;--edge:#5B6B80;
+--staff-f:#E8F0FB;--staff-s:#3A6DB4;--ai-f:#DFF4EF;--ai-s:#0F7F70;--sys-f:#ECEFF3;--sys-s:#66758A;--ext-f:#FCF0DA;--ext-s:#B2761B;--gate-f:#F0EBFA;--gate-s:#6A47B0;--note-s:#9AA7B8;--lane:#EEF2F7;--sel:#0F7F70}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1622;--surface:#152131;--line:#2A3A50;--fg:#EAF0F7;--fg2:#AAB8CA;--fg3:#7F90A6;--brand:#3CCDB8;--edge:#8EA0B8;
+--staff-f:#18304F;--staff-s:#6FA2E8;--ai-f:#12372F;--ai-s:#3CCDB8;--sys-f:#223044;--sys-s:#93A3BA;--ext-f:#42321A;--ext-s:#E3A44A;--gate-f:#2C2447;--gate-s:#A98AF0;--note-s:#5D6E85;--lane:#121D2C;--sel:#3CCDB8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1622;--surface:#152131;--line:#2A3A50;--fg:#EAF0F7;--fg2:#AAB8CA;--fg3:#7F90A6;--brand:#3CCDB8;--edge:#8EA0B8;
+--staff-f:#18304F;--staff-s:#6FA2E8;--ai-f:#12372F;--ai-s:#3CCDB8;--sys-f:#223044;--sys-s:#93A3BA;--ext-f:#42321A;--ext-s:#E3A44A;--gate-f:#2C2447;--gate-s:#A98AF0;--note-s:#5D6E85;--lane:#121D2C;--sel:#3CCDB8;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em;text-wrap:balance}
+.lead{color:var(--fg2);max-width:62ch;margin:0 0 18px}
+.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:14px}
+.tab{flex:none;border:0;background:none;color:var(--fg2);font:inherit;font-weight:500;padding:8px 13px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--fg)}.tab[aria-selected="true"]{background:var(--brand);color:#fff}
+:root[data-theme="dark"] .tab[aria-selected="true"],:root:not([data-theme="light"]) .tab[aria-selected="true"]{color:#06201C}
+.head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.head h2{font-size:18px;margin:0 0 2px}.head p{margin:0;color:var(--fg2);max-width:70ch}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--fg2)}
+.legend span{display:inline-flex;gap:6px;align-items:center}.sw{width:16px;height:11px;border-radius:3px;border:1.5px solid}
+.sw.staff{background:var(--staff-f);border-color:var(--staff-s)}.sw.ai{background:var(--ai-f);border-color:var(--ai-s)}.sw.sys{background:var(--sys-f);border-color:var(--sys-s)}.sw.ext{background:var(--ext-f);border-color:var(--ext-s)}.sw.gate{background:var(--gate-f);border-color:var(--gate-s);transform:skewX(-14deg)}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+svg{display:block}
+.lane-bg{fill:var(--lane)}.lane-bg.alt{fill:var(--surface)}.lane-name{font:600 11.5px "IBM Plex Sans",sans-serif;fill:var(--fg2)}
+.edge{fill:none;stroke:var(--edge);stroke-width:1.4}.edge.dash{stroke-dasharray:4 3}.elabel{font:500 10px "IBM Plex Sans",sans-serif;fill:var(--fg2);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.node{cursor:pointer;outline:none}.node .sh{stroke-width:1.5}
+.k-staff .sh{fill:var(--staff-f);stroke:var(--staff-s)}.k-ai .sh{fill:var(--ai-f);stroke:var(--ai-s)}.k-sys .sh{fill:var(--sys-f);stroke:var(--sys-s)}.k-ext .sh{fill:var(--ext-f);stroke:var(--ext-s)}.k-gate .sh{fill:var(--gate-f);stroke:var(--gate-s)}
+.k-start .sh,.k-end .sh{fill:var(--brand);stroke:var(--brand)}.k-start .nt,.k-end .nt,.k-start .nc,.k-end .nc{fill:#fff}
+:root[data-theme="dark"] .k-start .nt,:root[data-theme="dark"] .k-end .nt,:root[data-theme="dark"] .k-start .nc,:root[data-theme="dark"] .k-end .nc{fill:#06201C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .k-start .nt,:root:not([data-theme="light"]) .k-end .nt,:root:not([data-theme="light"]) .k-start .nc,:root:not([data-theme="light"]) .k-end .nc{fill:#06201C}}
+.k-note .sh{fill:none;stroke:var(--note-s);stroke-dasharray:4 3}
+.nt{font:500 11px "IBM Plex Sans",sans-serif;fill:var(--fg)}.nc{font:500 9.5px "IBM Plex Mono",monospace;fill:var(--fg3)}
+.node:hover .sh,.node:focus-visible .sh{stroke-width:2.6}.node.on .sh{stroke:var(--sel);stroke-width:3}
+.panel{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:6px 24px}
+.panel h3{margin:0;font-size:15px;grid-column:1/-1}.panel .code{font:500 11px "IBM Plex Mono",monospace;color:var(--fg3);margin-right:8px}
+.panel dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 12px}.panel dt{color:var(--fg3);font-size:12px}.panel dd{margin:0}
+.hint{color:var(--fg3);margin:0}
+@media (max-width:700px){.panel{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg2);font:inherit;padding:5px 11px;border-radius:99px;cursor:pointer}.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{color:#06201C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#06201C}}
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:760px}th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--fg3);font-weight:600;background:var(--lane);position:sticky;top:0}
+tr:last-child td{border-bottom:0}td.id{font:500 12px "IBM Plex Mono",monospace;color:var(--brand);white-space:nowrap}.m{font:500 12px "IBM Plex Mono",monospace;color:var(--fg2)}
+.foot{margin-top:22px;color:var(--fg3);font-size:12.5px;max-width:80ch}
+</style>
+<div class="wrap">
+<h1>Meridian end-to-end process maps</h1>
+<p class="lead">One map per loop, plus the denial path, the handover checks and a view of every portal. Rows show who acts. Click any step to see what happens, what the AI does and where it lives in the prototype.</p>
+<div class="tabs" role="tablist" id="tabs"></div>
+<div id="view"></div>
+<p class="foot">Source: Platform Plan Part 1 (workflows A01 to A13, M01 to M11, B01 to B21, handovers H01 to H24) and the Meridian prototype v0.6.1. Steps marked Gate cannot be skipped. All dollar values and thresholds in the product are synthetic examples.</p>
+</div>
+<script>
+const TABS=[['overview','End to end'],['access','1 Access'],['clinical','2 Clinical revenue'],['billing','3 Claim to cash'],['denials','Denial and recovery'],['handovers','Handovers'],['portals','Portals by stage']];
+const KINDS={staff:'Person at the provider',ai:'Meridian AI (a person approves)',sys:'System or platform',ext:'Other party: patient, payer, clearinghouse',gate:'Gate or decision'};
+/* N(lane,col,kind,code,text,who,detail,screen) */
+const N=(l,c,k,code,t,w,d,p)=>({l,c,k,code,t,w,d,p});
+const MAPS={
+overview:{t:'From first contact to closed case',s:'All five portals on one line. Loop 1 gets the patient ready, loop 2 produces a clean claim, loop 3 collects the money. The platform row watches all of it.',
+lanes:['Patient','Provider: access','Provider: clinical','Provider: billing and recovery','Clearinghouse','Payer','Meridian platform'],
+nodes:{
+o1:N(0,0,'start','PP01','Books or calls','Patient, or the AI voice and chat agent','Patient picks a reason and a slot. The AI asks short questions first and stops on red-flag words such as chest pain.','Patient portal: Book visit'),
+o2:N(1,1,'staff','A02 to A04','Schedule and pre-register','Scheduler, registrar','Visit booked, identity and coverage captured, duplicate records caught before they spread.','Schedule, Registration, Duplicates'),
+o3:N(1,2,'staff','A05 to A09','Verify, authorize, estimate','Verification, authorization, counselor','Eligibility (270/271), prior authorization where a rule says so, then a price estimate or good faith estimate.','Eligibility, Authorization, Estimate'),
+o4:N(1,3,'gate','H07','Cleared to arrive?','Financial counselor, access manager','Status is green, amber or red. Red means contact the patient before the visit, or a manager overrides.','Clearance, Check-in'),
+o5:N(2,4,'staff','M01','Document the visit','Provider','Sign the note once. AI points out documentation gaps while the provider is still in the chart.','Encounter'),
+o6:N(2,5,'staff','M03 to M07','Charge, query, code','Nurse, revenue integrity, CDI, coder','Orders become charges, documentation queries are answered, and codes are suggested with note citations.','Charge capture, CDI, Coding'),
+o7:N(2,6,'gate','H12, H13','Clean claim?','Coder, revenue integrity','No open queries, no holds, authorization linked. Otherwise the claim waits on a bill hold with a reason.','Holds, Release queue'),
+o8:N(3,7,'staff','B01, B02','Build and submit claim','Billing specialist','Claim edits run before sending, so errors are fixed while they are cheap.','Submission'),
+o9:N(4,8,'ext','C02','Edit, route, acknowledge','Clearinghouse operations','Returns the 999 and 277CA. Rejected claims go straight back to billing with the reason.','Clearinghouse: Edits and routing'),
+o10:N(5,9,'ext','Y03','Adjudicate claim','Payer claims adjudicator','Pays, partly pays, pends or denies each line.','Payer: Claim adjudication'),
+o11:N(4,10,'ext','C04','Deliver 835 and payment','Clearinghouse operations','The 835 reaches the right provider. Duplicate and missing files are flagged.','Clearinghouse: Remittance delivery'),
+o12:N(3,11,'staff','B04','Post payment','Cash poster','Match 835 lines to the claim lines.','Remits'),
+o13:N(3,12,'gate','H16','Denied or adjusted?','Posting rules','Denial codes are read per line.','Triage'),
+o14:N(3,13,'staff','B05 to B12','Triage and recover','Denials analyst, appeals specialist','Corrected claim, records, appeal or coverage update. A person approves before anything leaves.','Triage to Approvals'),
+o15:N(0,14,'ext','PP05, PP06','Pays share, disputes, applies for aid','Patient','Statement, plan, dispute or assistance. A dispute pauses collection.','Patient portal: Pay and plan'),
+o16:N(3,14,'staff','B13 to B17','Bill patient, reconcile','Patient financial services, finance','Statements and plans for the patient share; deposits matched to payments and the ledger.','Patient accounts, Deposits, Ledger'),
+o17:N(3,15,'end','B20','Case closed','Finance, manager','Closes only when every line is paid, adjusted or written off (H21).','Closure'),
+x1:N(5,3,'ext','Y01, Y02','Payer answers coverage and authorization','Eligibility rep, UM nurse','271 response and authorization decision within the program clock.','Payer: Eligibility, Prior authorization'),
+x2:N(0,3,'ext','PP04','Sees estimate, picks how to pay','Patient','Pay now, save a card, take a plan or apply for assistance. Choice updates clearance.','Patient portal: Estimate'),
+p1:N(6,1,'sys','X01, X03','Identity, consent, audit trail','Platform administrator','Every user type signs in with the right strength. Every read, write, approval and export is logged in a chained trail.','Platform: Identity, Audit trail'),
+p2:N(6,5,'sys','X02','AI governance','AI governance reviewer','Every AI output is logged, sampled and scored. Any AI assist can be switched to suggestion only or off.','Platform: AI governance'),
+p3:N(6,9,'sys','X04','Integration health','Rules owner, provider admin','Watches interfaces, queues during downtime and resends after.','Platform: Integrations'),
+p4:N(6,13,'sys','B21','Prevention feeds back','Rule owner','Each denial root cause becomes a proposed rule for the front end. Published rules reach loops 1 and 2.','Prevention loop, Rules packs')},
+edges:[['o1','o2'],['o2','o3'],['o3','o4'],['o4','o5',{l:'Green or amber'}],['o5','o6'],['o6','o7'],['o7','o8',{l:'Yes'}],['o7','o6',{t:'back',l:'Hold'}],['o8','o9'],['o9','o8',{t:'back',l:'Reject',k:1}],['o9','o10'],['o10','o11'],['o11','o12'],['o12','o13'],['o13','o14',{l:'Yes'}],['o13','o16',{l:'Paid'}],['o14','o10',{t:'back',l:'Resubmit',k:2}],['o14','o16'],['o16','o17'],['o16','o15',{d:1,t:'v'}],['o3','x1',{d:1}],['o3','x2',{d:1}],['p4','o3',{t:'back',d:1,l:'Rule published',k:0}]]},
+access:{t:'Loop 1: Access',s:'From first contact to a patient who is registered, cleared and ready to be seen. Eight handover checks (H01 to H08) stop bad data early.',
+lanes:['Patient','Meridian AI','Contact center','Scheduling','Registration','Verification and authorization','Financial counseling','Payer'],
+nodes:{
+a1:N(0,0,'start','PP01','Calls, chats or books online','Patient','Any channel; the patient portal, voice and chat all use the same services as staff.','Patient portal: Book visit'),
+a2:N(1,1,'ai','A01','Answers, checks red flags, identifies caller','AI assistant','Suggests the next step and summarizes the caller. Never gives medical advice; red-flag words hand off to a nurse or emergency instructions.','Contact console'),
+a3:N(2,2,'gate','H01','Identity verified?','Contact center agent','Identity must be verified to policy before anything is booked.','Contact console'),
+a3n:N(2,3,'staff','A01','Agent verifies identity','Contact center agent','Used only when the AI could not verify identity.','Contact console'),
+a4:N(3,4,'staff','A02','Book visit type, provider, slot','Scheduler','AI ranks slots by fit and no-show risk.','Schedule, Appointment'),
+a5:N(3,5,'staff','A03','Referral intake','Scheduler, registrar','Only when the plan or service requires a referral.','Referrals'),
+g2:N(4,6,'gate','H02','Visit type billable?','Scheduler','Visit type must map to a billable service. If not, the scheduler corrects it.','Schedule'),
+a6:N(4,7,'staff','A04','Pre-register, read ID and card','Registrar','AI reads ID and card images and flags likely duplicates.','Registration, Duplicates'),
+g3:N(4,8,'gate','H03','Complete, no duplicate?','Registrar','Required fields complete and no duplicate record. Otherwise the registration exception queue.','Registration, Duplicates'),
+a7:N(5,9,'staff','A05, A06','Find coverage, check eligibility','Verification specialist','271 response is read and explained in plain words.','Eligibility'),
+g4:N(5,10,'gate','H04','Authorization required?','Authorization specialist','A rule decides. If not required, the case moves straight to estimate.','Authorization'),
+a8:N(5,11,'staff','A07, A08','Prior authorization','Authorization specialist','Request is assembled from the chart and tracked. Booking is blocked outside authorized dates.','Authorization'),
+a9:N(6,12,'staff','A09','Estimate or good faith estimate','Financial counselor','Shows a range and a caveat if benefits are not current (H05). Self-pay patients get the good faith estimate.','Estimate'),
+g5:N(6,13,'gate','H07','Clearance: green, amber, red?','Financial counselor','Red needs contact before arrival or a manager override.','Clearance'),
+a10:N(6,14,'staff','A10','Contact patient or override','Financial counselor, access manager','Explains cost, offers a plan or assistance screening, or records the override with a reason.','Clearance, Plans and assistance'),
+a11:N(4,14,'staff','A11','Check in, re-verify, collect','Registrar','Identity and coverage are re-verified at the desk (H08) and the amount to collect is shown.','Check-in'),
+e1:N(4,15,'end','M01','To loop 2','Registrar','Registered encounter with a coverage snapshot passes to the clinical team.','Encounter'),
+pp:N(0,13,'ext','PP04','Sees estimate, picks how to pay','Patient','Pay now, save a card, take a plan or apply for assistance.','Patient portal: Estimate'),
+y1:N(7,9,'ext','Y01','Returns 271','Payer','Answers through the clearinghouse (H24). Retries, then a manual portal check.','Payer: Eligibility'),
+y2:N(7,11,'ext','Y02','Decides authorization','Payer','Decision with number, units and dates (H23). Pends if clinical data is missing.','Payer: Prior authorization'),
+n1:N(1,9,'note','A12','Reminders, no-shows, rescheduling','AI and scheduler','Runs in the background for every booked visit.','Reminders'),
+n2:N(4,0,'note','A13','Hospital admission and ED','Registrar','Hospital only: admissions and ED registration enter here with patient status.','Admissions and ED')},
+edges:[['a1','a2'],['a2','a3'],['a3','a3n',{l:'No'}],['a3','a4',{l:'Yes'}],['a3n','a4'],['a4','a5',{d:1,l:'If required'}],['a5','g2'],['a4','g2',{l:'No referral'}],['g2','a6',{l:'Yes'}],['g2','a4',{t:'back',l:'No: correct visit type'}],['a6','g3'],['g3','a7',{l:'Yes'}],['g3','a6',{t:'back',l:'No: exception queue',k:1}],['a7','g4'],['g4','a8',{l:'Yes'}],['g4','a9',{t:'vh',l:'No'}],['a8','a9'],['a9','g5'],['g5','a11',{l:'Green or amber'}],['g5','a10',{l:'Red'}],['a10','a11',{t:'v'}],['a11','e1'],['a9','pp',{d:1}],['a7','y1',{t:'v',d:1}],['a8','y2',{t:'v',d:1}]]},
+clinical:{t:'Loop 2: Clinical revenue',s:'From the start of the visit to a clean, coded, compliant claim. Five checks (H09 to H13) decide whether the claim is released or held.',
+lanes:['Rendering provider','Nurse or medical assistant','UR and CDI','Coder and HIM','Revenue integrity','Meridian AI'],
+nodes:{
+m1:N(0,0,'start','M01','Visit documented, orders entered','Physician or APP','Arrives from check-in with a coverage snapshot (H08). AI suggests documentation gaps at the point of care.','Encounter'),
+g1:N(0,1,'gate','H09','Note signed by the rendering provider?','Physician or APP','Signature is required before charges and coding.','Encounter'),
+h1:N(3,1,'staff','M08','Reminder, then bill hold','HIM specialist','If unsigned, the provider is reminded, then the encounter goes on bill hold.','Holds'),
+m3:N(1,2,'staff','M03','Capture charges from orders','Nurse or medical assistant','Orders pre-fill charges; missing authorization is flagged.','Charge capture'),
+m4:N(4,3,'staff','M04, M02','Review charges against charge master','Revenue integrity analyst','Finds missing and duplicate charges and prices against the fee schedule.','Charge master, Charge capture'),
+g2:N(4,4,'gate','H10','Every order charged or excluded?','Revenue integrity analyst','Each order needs a charge or an exclusion reason. Otherwise the charge review queue.','Charge capture'),
+m5:N(2,4,'note','M05','Utilization review (hospital)','UR nurse','Hospital only: level of care and continued stay against criteria.','Utilization review'),
+ai:N(5,5,'ai','M07','Suggests codes with note citations','AI coding assistant','Every suggestion cites the sentence in the note that supports it.','Coding'),
+m7:N(3,5,'staff','M07','Code the encounter','Coder','Accepts or edits suggestions. Final codes need no open queries.','Coding'),
+m6:N(2,6,'staff','M06','Query provider; answer or close','CDI specialist','AI drafts a compliant query. The coder escalates to the CDI lead if unanswered (H11).','Queries, CDI'),
+g3:N(3,7,'gate','H12','Codes final, no open query, chart complete?','Coder','Otherwise the encounter goes on bill hold with a reason code.','Coding, Holds'),
+m8:N(3,8,'staff','M08','Complete chart, DNFB, bill hold','HIM specialist','Finds deficiencies and ranks stuck accounts by value.','Holds'),
+m11:N(4,8,'staff','M11, M09','Pre-bill audit, enrollment, authorization','Revenue integrity analyst','Checks the rendering provider is enrolled with the payer and the authorization is linked.','Release queue, Enrollment'),
+n10:N(5,8,'note','M10','Accident and liability indicators','AI and TPL specialist','Flags workers compensation, auto and liability cases for recovery from the right payer.','Liability'),
+g4:N(4,9,'gate','H13','No holds, authorization linked, coverage order set?','Revenue integrity analyst','If not, the claim returns to the holding queue.','Release queue'),
+e1:N(4,10,'end','B01','Claim ready: to loop 3','Revenue integrity analyst','Released encounter passes to claim build.','Submission')},
+edges:[['m1','g1'],['g1','h1',{t:'v',l:'No'}],['g1','m3',{l:'Yes'}],['m3','m4'],['m4','g2'],['g2','m7',{l:'Yes'}],['g2','m4',{t:'back',l:'No: charge review'}],['ai','m7',{t:'v',d:1}],['m7','m6',{l:'Query'}],['m7','g3',{l:'No query'}],['m6','g3'],['g3','m11',{l:'Yes'}],['g3','m8',{l:'No'}],['m8','g3',{t:'back',l:'Fixed'}],['m11','g4'],['g4','m8',{t:'vhr',l:'No: hold'}],['g4','e1',{l:'Yes'}]]},
+billing:{t:'Loop 3: Claim to cash and closure',s:'From the released claim to a closed case. A denied line leaves this path for the denial map and returns to posting.',
+lanes:['Billing','AR and posting','Clearinghouse','Payer','Patient financial services','Finance','Meridian AI'],
+nodes:{
+b1:N(0,0,'start','B01','Build claim','Billing specialist','Builds the claim from the released encounter.','Submission'),
+ai1:N(6,1,'ai','B01','Explains each edit, fills fields from the record','AI assistant','Suggests fixes from the EHR record; the biller decides.','Corrected claim'),
+g1:N(0,1,'gate','Edits','Claim clean?','Billing specialist','Edits must pass before sending.','Submission'),
+b2:N(0,2,'staff','B02','Submit 837 with attachments','Billing specialist','Released through the clearinghouse. A person approves release.','Submission'),
+c2:N(2,3,'ext','C02','999, edits, route','Clearinghouse','Returns the 999, applies clearinghouse and payer edits, routes accepted claims.','Clearinghouse: Edits and routing'),
+g2:N(2,4,'gate','H14','Passes edits?','Clearinghouse','Rejected claims go to the rejection queue with the reason.','Clearinghouse: Edits and routing'),
+rj:N(0,4,'staff','B02','Rejection queue: fix and resubmit','Billing specialist','Fix the cause named in the 277CA and send again.','Submission'),
+y3:N(3,5,'ext','Y03','Adjudicates, 277CA accepted','Payer','Pays, partly pays, pends or denies each line.','Payer: Claim adjudication'),
+b3:N(1,5,'staff','B03','AR follow-up when no answer','AR specialist','Status checks (276) and escalation when a claim has no response.','AR follow-up'),
+y6:N(3,6,'ext','Y06','Issues 835 and EFT','Payer payment operations','Groups paid claims into one payment with a trace number.','Payer: Remittance and payment'),
+c4:N(2,7,'ext','C04','Delivers 835 to provider','Clearinghouse','H15: file is complete and matched to claims, else the unmatched remit queue.','Clearinghouse: Remittance delivery'),
+b4:N(1,8,'staff','B04','Post payment to service lines','Cash poster','AI matches lines and explains exceptions.','Remits'),
+g3:N(1,9,'gate','H16','Denied or adjusted lines?','Cash poster','Denial codes are parsed per line. Unparsed codes go to manual coding.','Remits, Triage'),
+b5:N(0,10,'staff','B05 to B12','Denial triage and recovery','Denials analyst, appeals','See the denial and recovery map.','Triage'),
+pf:N(4,10,'staff','B13','Patient statement for remaining share','Patient financial services','Only after primary and secondary payers are finished (H19).','Patient accounts'),
+pl:N(4,11,'staff','B14','Payment plan or assistance','Patient financial services','Plans from $25 a month; assistance by poverty-line band.','Plans and assistance'),
+b17:N(5,10,'staff','B17','Match EFT to deposit, reconcile','Finance analyst','Posted payment to deposit to ledger (H20). Breaks go to a break log.','Deposits, Ledger'),
+ai2:N(6,10,'ai','B17','Proposes deposit matches','AI assistant','Ranks likely matches and explains exceptions.','Deposits'),
+b15:N(5,11,'staff','B15, B16','Refund credits; write off with approval','Refund specialist, finance, supervisor','Credits are traced to their source. Write-offs need an approver within limit.','Refunds and credits, Write-offs'),
+g4:N(5,12,'gate','H21','Every line paid, adjusted or written off?','Finance, manager','The closure rule. Otherwise the case stays open with the blocking reason.','Closure'),
+e1:N(5,13,'end','B20','Close case','Finance, manager','Reopens on recoupment, late remittance, audit finding or patient dispute.','Closure'),
+n1:N(1,12,'note','B10 to B12','Underpayment, audit, dispute','Analysts','Underpayments, audits and out-of-network disputes can reopen or extend a case.','Underpayments, Audits, Disputes')},
+edges:[['b1','g1'],['g1','b2',{l:'Yes'}],['g1','b1',{t:'back',l:'Fix'}],['ai1','g1',{t:'v',d:1}],['b2','c2'],['c2','g2'],['g2','y3',{l:'Yes'}],['g2','rj',{t:'v',l:'No'}],['rj','b2',{t:'back',l:'Resubmit'}],['g2','b3',{d:1,l:'No answer'}],['y3','y6'],['y6','c4'],['c4','b4'],['b4','g3'],['g3','b5',{l:'Yes'}],['g3','pf',{l:'No: patient share'}],['g3','b17',{t:'vh',l:'Payment'}],['b5','b4',{t:'back',l:'New remit',k:1}],['pf','pl'],['b17','b15'],['pl','g4'],['b15','g4'],['ai2','b17',{t:'v',d:1}],['g4','e1',{l:'Yes'}],['g4','b4',{t:'back',l:'No: stays open',k:2}]]},
+denials:{t:'Denial and recovery',s:'Triage chooses one of four paths. Every path ends at the same approval gate, and a denied line returns to triage. Root causes flow back to the front end.',
+lanes:['Meridian AI','Denials analyst','Billing specialist','Coverage specialist','Appeals specialist','Approver','Payer','Finance and rule owner'],
+nodes:{
+d1:N(0,0,'ai','B05','Parses codes per line, scores recovery, finds root cause','AI assistant','Compares the denial with the chart and recommends a path with a confidence score and three reasons.','Triage'),
+d2:N(1,1,'gate','H17','Analyst confirms the path or overrides with a reason?','Denials analyst','Overrides need a reason of at least 10 characters and go to a supervisor.','Triage'),
+ov:N(5,1,'staff','Override','Supervisor reviews the override','Supervisor','Upheld or accepted; the reason is kept as training feedback.','Triage, Approvals'),
+pe:N(1,2,'staff','B07','Evidence packet: records, missing items','Denials analyst','Assembles records for a documentation request and flags what is missing.','Evidence packet'),
+pb:N(2,2,'staff','B06','Corrected claim from EHR data','Billing specialist','Frequency-7 replacement claim; data comes from the record.','Corrected claim'),
+pc:N(3,2,'staff','B09','Verify 271, set coverage order, rebill','Coverage specialist','Updates coverage order and bills the right payer; secondary follows.','Coverage'),
+pa:N(4,2,'staff','B08','Draft appeal; each statement cites a source','Appeals specialist','AI drafts from policy and chart. Unsupported statements block sending.','Appeal builder'),
+gs:N(4,3,'gate','Gate','Any unsupported statement?','Appeals specialist','If yes, replace it with sourced wording or remove it before the draft can move.','Appeal builder, Compliance'),
+ga:N(5,4,'gate','H18','Within limit, approver not the author?','Supervisor or manager','Approval limits and separation of duties apply. Otherwise returned to the author.','Approvals'),
+py:N(6,5,'ext','Y03, Y04, Y05','Pays, accepts records or decides the appeal','Payer','Rules pack decides the answer for each test case.','Payer: Appeals, Records requests'),
+ps:N(1,6,'staff','B04','Post new remit, compare to expected','Cash poster, analyst','Posts the 835 and checks the amount.','Remits'),
+g5:N(1,7,'gate','Paid?','Paid in full?','Denials analyst','If not, re-triage for the next appeal level, or accept and write off with approval.','Triage, Write-offs'),
+fi:N(7,8,'staff','B17','Reconcile deposit, close the case','Finance analyst','Deposit matched, ledger updated, closure rule checked.','Deposits, Closure'),
+rc:N(7,9,'sys','B21','Root cause becomes a proposed rule','AI and rule owner','Each denial gets a root cause and a proposed front-end rule.','Prevention loop'),
+e1:N(7,10,'end','H22','Rule approved: published to loops 1 and 2','Rule owner','Registration, eligibility, authorization, coding and release checks improve so the denial does not repeat.','Rules packs')},
+edges:[['d1','d2'],['d2','ov',{t:'v',d:1,l:'Override'}],['d2','pe',{l:'Records'}],['d2','pb',{l:'Data fix'}],['d2','pc',{l:'Coverage'}],['d2','pa',{l:'Dispute'}],['pa','gs'],['gs','pa',{t:'back',l:'Yes: fix'}],['pe','ga'],['pb','ga'],['pc','ga'],['gs','ga',{l:'No'}],['ga','py',{l:'Approved'}],['py','ps'],['ps','g5'],['g5','d2',{t:'back',l:'Denied again: re-triage'}],['g5','fi',{l:'Yes'}],['fi','rc'],['rc','e1']]}
+};
+const HOS=[
+['H01','Access','A01 Contact → A02 Scheduling','Identified patient, reason, preferred times','Identity verified to policy','Human agent verifies identity'],
+['H02','Access','A02 Scheduling → A04 Pre-registration','Appointment, visit type, provider, location','Visit type maps to a billable service','Scheduler corrects visit type'],
+['H03','Access','A04 Pre-registration → A06 Verification','Demographics, coverage, guarantor','Required fields complete, no duplicate record','Registration exception queue'],
+['H04','Access','A06 Verification → A08 Authorization','Verified benefits, service, plan','Rule says authorization required','None needed: pass straight to estimate'],
+['H05','Access','A06 and A08 → A09 Estimate','Benefits, authorization status','Benefits current, authorization decided or pending with a reason','Estimate shows a range and a caveat'],
+['H06','Access','A09 Estimate → A10 Clearance','Estimate, patient responsibility','Estimate approved','Counselor reviews'],
+['H07','Access','A10 Clearance → A11 Check-in','Clearance status and amount to collect','Status is not red, or a manager overrides','Visit flagged, patient contacted before arrival'],
+['H08','Access','A11 Check-in → M01 Encounter','Arrived, registered encounter, coverage snapshot','Identity and coverage re-verified','Registrar resolves at the desk'],
+['H09','Clinical','M01 Documentation → M03 Charge capture','Signed note, orders, results','Note signed by the rendering provider','Provider reminder, then bill hold'],
+['H10','Clinical','M03 Charges → M07 Coding','Reconciled charges, procedures','Every order has a charge or an exclusion reason','Charge review queue'],
+['H11','Clinical','M07 Coding ↔ M06 CDI','Documentation queries and answers','Query answered or closed with reason','Coder escalates to CDI lead'],
+['H12','Clinical','M07 Coding → M08 Bill hold or M11 Release','Final diagnosis and procedure codes','Codes final, no open queries','Bill hold with reason code'],
+['H13','Clinical','M11 Release → B01 Claim build','Claim-ready encounter','No holds, authorization linked, coverage order set','Back to the holding queue'],
+['H14','Billing','B02 Claim → C02 → Y03 Payer','837 claim, attachments','Claim passes edits','Rejection queue'],
+['H15','Billing','Y06 Payer → C04 → B04 Posting','835 and EFT trace','File complete and matched to claims','Unmatched remit queue'],
+['H16','Billing','B04 Posting → B05 Denial triage','Denied or adjusted lines with codes','Denial codes parsed per line','Manual coding of denial'],
+['H17','Billing','B05 Triage → B06, B07, B08, B09','Chosen path, evidence, deadline','Analyst confirmed the AI recommendation or overrode it','Supervisor review'],
+['H18','Billing','B06, B07, B08 → Y03, Y04, Y05','Corrected claim, records, appeal','Approved by a reviewer within limit','Returned to author'],
+['H19','Billing','B04 Posting → B13 Patient billing','Patient responsibility per line','Primary and secondary payers finished','Wait for secondary or return to B09'],
+['H20','Billing','B04 Posting → B17 Reconciliation','Posted payment and EFT trace','A deposit exists for the trace','Break log'],
+['H21','Billing','B04, B13, B16, B17 → B20 Closure','Line-level balance and cash status','Closure rule satisfied for every line','Stays open with the blocking reason'],
+['H22','Cross-portal','B05 and B20 → B21 → A06, A07, A08, M09, M11','Root cause and a proposed rule change','Rule owner approves','Stays as a recommendation'],
+['H23','Cross-portal','A08 Provider ↔ Y02 Payer','Authorization request and decision (278, FHIR)','Request has required clinical data','Pended for more information'],
+['H24','Cross-portal','A06 Provider ↔ Y01 Payer (through C03)','Eligibility inquiry and response (270/271)','Response parsed to benefits','Retry, then manual portal check']];
+const STAGES=[
+['Book and schedule','PP01','A01 to A03, A12','·','·','X01 identity'],
+['Intake and coverage','PP02, PP03','A04 to A06','Y01','C03','X01 consent'],
+['Authorization','·','A07, A08','Y02','C03','X05 rules'],
+['Estimate and payment choice','PP04, PP07','A09 to A11, B14','·','·','·'],
+['Visit and clinical work','·','M01 to M11','·','·','X02 AI governance'],
+['Claim submission','·','B01, B02','Y03','C01, C02','X04 integrations'],
+['Adjudication and payment','·','B03, B04','Y03 to Y06','C04','X04 integrations'],
+['Denial, appeal, recovery','PP06','B05 to B12','Y04, Y05, Y07','C05','X02, X05'],
+['Patient billing','PP05, PP08, PP09','B13 to B16','·','·','X03 audit trail'],
+['Reconcile and close','·','B17 to B20','Y06','C04','X03 audit trail'],
+['Prevention','·','B21','Y08','C05','X05 rules packs']];
+const LH=112,LW=124,CP=142,NW=124,NH=68,GAP=CP-NW,PAD=6;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function wrap(t,max){const w=t.split(' '),L=[];let c='';w.forEach(x=>{if((c+' '+x).trim().length>max&&c){L.push(c);c=x}else c=(c+' '+x).trim()});if(c)L.push(c);return L}
+function drawMap(m){const keys=Object.keys(m.nodes);const maxC=Math.max(...keys.map(k=>m.nodes[k].c))+1;const W=LW+maxC*CP+12,H=m.lanes.length*LH+PAD*2+16;
+ const pos={};keys.forEach(k=>{const n=m.nodes[k];const cx=LW+n.c*CP+CP/2,cy=PAD+n.l*LH+LH/2;pos[k]={cx,cy,l:cx-NW/2,r:cx+NW/2,t:cy-NH/2,b:cy+NH/2,n}});
+ let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(m.t)}"><defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--edge)"/></marker></defs>`;
+ m.lanes.forEach((ln,i)=>{s+=`<rect class="lane-bg ${i%2?'alt':''}" x="0" y="${PAD+i*LH}" width="${W}" height="${LH}"/><text class="lane-name">${wrap(ln,17).map((t,j)=>`<tspan x="10" y="${PAD+i*LH+LH/2-4+j*13-(wrap(ln,17).length-1)*6}">${esc(t)}</tspan>`).join('')}</text>`});
+ s+=`<line x1="${LW}" x2="${LW}" y1="${PAD}" y2="${H-16}" stroke="var(--line)"/>`;
+ const laneBottom=l=>PAD+(l+1)*LH-7;const busCount={};
+ let edges='',labels='';
+ m.edges.forEach(e=>{const a=pos[e[0]],b=pos[e[1]],o=e[2]||{},d=o.d?' dash':'',same=a.n.l===b.n.l;let p,lx,ly,anchor='middle';
+  const t=o.t||'hv';
+  if(t==='back'){const lm=Math.max(a.n.l,b.n.l),k=o.k!=null?o.k:(busCount[lm]=(busCount[lm]||0)),by=laneBottom(lm)-k*5;if(o.k==null)busCount[lm]++;p=`M${a.cx} ${a.b} V${by} H${b.cx} V${b.b+1}`;lx=(a.cx+b.cx)/2;ly=by-4}
+  else if(t==='v'){const down=b.cy>a.cy;const y1=down?a.b:a.t,y2=down?b.t:b.b;p=`M${a.cx} ${y1} V${y2+(down?-1:1)}`;lx=a.cx+5;ly=(y1+y2)/2;anchor='start'}
+  else if(t==='vh'){const down=b.cy>a.cy,y1=down?a.b:a.t;p=`M${a.cx} ${y1} V${b.cy} H${b.l-1}`;lx=a.cx+5;ly=(y1+b.cy)/2;anchor='start'}
+  else if(t==='vhr'){const down=b.cy>a.cy,y1=down?a.b:a.t;p=`M${a.cx} ${y1} V${b.cy} H${b.r+1}`;lx=a.cx+5;ly=(y1+b.cy)/2;anchor='start'}
+  else if(same){p=`M${a.r} ${a.cy} H${b.l-1}`;lx=(a.r+b.l)/2;ly=a.cy-5}
+  else{const xm=b.l-GAP/2;p=`M${a.r} ${a.cy} H${xm} V${b.cy} H${b.l-1}`;lx=xm+4;ly=(a.cy+b.cy)/2;anchor='start'}
+  edges+=`<path class="edge${d}" d="${p}" marker-end="url(#ar)"/>`;if(o.l)labels+=`<text class="elabel" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(o.l)}</text>`});
+ s+=edges+labels;
+ keys.forEach(k=>{const q=pos[k],n=q.n;const lines=wrap(n.t,n.k==='gate'?17:19).slice(0,4),rows=lines.length+1;const startY=q.cy-(rows*12)/2+6;
+  let shape;if(n.k==='gate'){const x=q.l,y=q.t,w=NW,h=NH,c=14;shape=`<polygon class="sh" points="${x+c},${y} ${x+w-c},${y} ${x+w},${y+h/2} ${x+w-c},${y+h} ${x+c},${y+h} ${x},${y+h/2}"/>`}
+  else if(n.k==='start'||n.k==='end')shape=`<rect class="sh" x="${q.l}" y="${q.t}" width="${NW}" height="${NH}" rx="${NH/2}"/>`;
+  else shape=`<rect class="sh" x="${q.l}" y="${q.t}" width="${NW}" height="${NH}" rx="7"/>`;
+  const txt=`<text class="nc" x="${q.cx}" y="${startY}" text-anchor="middle">${esc(n.code)}</text>`+lines.map((t,i)=>`<text class="nt" x="${q.cx}" y="${startY+13*(i+1)}" text-anchor="middle">${esc(t)}</text>`).join('');
+  s+=`<g class="node k-${n.k}" data-n="${k}" tabindex="0" role="button" aria-label="${esc(n.code+' '+n.t)}">${shape}${txt}</g>`});
+ return s+'</svg>'}
+let cur='overview',curMap=null;
+function legend(){return `<div class="legend">${Object.keys(KINDS).map(k=>`<span><i class="sw ${k}"></i>${KINDS[k]}</span>`).join('')}</div>`}
+function showNode(k){const n=curMap.nodes[k];document.querySelectorAll('.node').forEach(g=>g.classList.toggle('on',g.dataset.n===k));
+ document.getElementById('panel').innerHTML=`<h3><span class="code">${esc(n.code)}</span>${esc(n.t)}</h3><dl><dt>Who</dt><dd>${esc(n.w)}</dd><dt>What</dt><dd>${esc(n.d)}</dd></dl><dl><dt>Type</dt><dd>${KINDS[n.k]||'Supporting note'}</dd><dt>In the prototype</dt><dd>${esc(n.p||'Not built')}</dd></dl>`}
+function render(){document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===cur));const v=document.getElementById('view');
+ if(MAPS[cur]){const m=curMap=MAPS[cur];v.innerHTML=`<div class="head"><div><h2>${esc(m.t)}</h2><p>${esc(m.s)}</p></div>${legend()}</div><div class="mapbox">${drawMap(m)}</div><div class="panel" id="panel"><p class="hint">Select a step to see who does it, what happens and where it lives in the prototype.</p></div>`;
+  v.querySelectorAll('.node').forEach(g=>{g.addEventListener('click',()=>showNode(g.dataset.n));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(g.dataset.n)}})})}
+ else if(cur==='handovers'){v.innerHTML=`<div class="head"><div><h2>Twenty-four handover checks</h2><p>A handover passes specific data and has a ready check. If the check fails, the item goes to a named queue and does not move on.</p></div></div><div class="chips" id="chips">${['All','Access','Clinical','Billing','Cross-portal'].map(c=>`<button class="chip" data-f="${c}" aria-pressed="${c===(window.HF||'All')}">${c}</button>`).join('')}</div><div class="tw"><table><thead><tr><th>ID</th><th>From to</th><th>What passes</th><th>Ready when</th><th>If not ready</th></tr></thead><tbody>${HOS.filter(h=>(window.HF||'All')==='All'||h[1]===window.HF).map(h=>`<tr><td class="id">${h[0]}</td><td class="m">${esc(h[2])}</td><td>${esc(h[3])}</td><td>${esc(h[4])}</td><td>${esc(h[5])}</td></tr>`).join('')}</tbody></table></div>`;
+  v.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{window.HF=c.dataset.f;render()}))}
+ else{v.innerHTML=`<div class="head"><div><h2>Who acts at each stage</h2><p>Every portal has workflows at the stages that matter to it. IDs match the plan: PP patient, A, M and B provider, Y payer, C clearinghouse, X platform.</p></div></div><div class="tw"><table><thead><tr><th>Stage</th><th>Patient</th><th>Provider</th><th>Payer</th><th>Clearinghouse</th><th>Platform</th></tr></thead><tbody>${STAGES.map(r=>`<tr><td><b>${esc(r[0])}</b></td>${r.slice(1).map(c=>`<td class="${c==='·'?'':'m'}">${c==='·'?'<span style="color:var(--fg3)">·</span>':esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}}
+const tb=document.getElementById('tabs');tb.innerHTML=TABS.map(t=>`<button class="tab" role="tab" data-t="${t[0]}">${t[1]}</button>`).join('');
+tb.addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;cur=b.dataset.t;try{history.replaceState(null,'','#'+cur)}catch(x){}render()});
+(function(){const h=(location.hash||'').slice(1);if(TABS.some(t=>t[0]===h))cur=h;render()})();
+</script>

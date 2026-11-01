@@ -2,6 +2,11 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v0.6.2 - Process maps
+- New file process-maps.html: swimlane maps for the whole platform (end to end, Access, Clinical revenue, Claim to cash, Denial and recovery), the 24 handover checks and a portal-by-stage matrix. Published as its own artifact
+- The product (index.html) is unchanged in this release
+- Rollback: delete process-maps.html, or `git checkout v0.6.1`
+
 ## v0.6.1 - Two-step sign-in, new landing page, polish
 - Sign-in is now two steps: first choose a portal (5 cards with who uses it, what they do, role and workflow counts, sign-in method), then choose a role; "Change portal" returns to step 1
 - Landing page rewritten for the five-portal platform: portal cards, three loops, updated scope; landing buttons open the portal step
