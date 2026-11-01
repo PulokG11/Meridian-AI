@@ -2,6 +2,11 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v0.6.3 - GitHub Pages deployment
+- Added a GitHub Actions workflow that publishes index.html and process-maps.html to GitHub Pages on every push to main
+- Site: https://pulokg11.github.io/Meridian-AI/ (prototype) and /process-maps.html (process maps)
+- Rollback: delete .github/workflows/pages.yml; the site stops updating
+
 ## v0.6.2 - Process maps
 - New file process-maps.html: swimlane maps for the whole platform (end to end, Access, Clinical revenue, Claim to cash, Denial and recovery), the 24 handover checks and a portal-by-stage matrix. Published as its own artifact
 - The product (index.html) is unchanged in this release
