@@ -2,6 +2,11 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v0.6.4 - README
+- README rewritten for the five-portal platform, with the two live links, a portal summary and the version history
+- The product (index.html) and process maps are unchanged in this release
+- Rollback: `git checkout v0.6.3 -- README.md`
+
 ## v0.6.3 - GitHub Pages deployment
 - Added a GitHub Actions workflow that publishes index.html and process-maps.html to GitHub Pages on every push to main
 - Site: https://pulokg11.github.io/Meridian-AI/ (prototype) and /process-maps.html (process maps)
