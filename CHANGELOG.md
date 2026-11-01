@@ -1,6 +1,14 @@
 # Changelog
 
-Each release is a git tag. To roll back: `git checkout v0.3.0 -- index.html` (then commit), or `git revert <commit>`.
+Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
+
+## v0.5.0 - Navigation and role picker
+- Tabs regrouped into 8 sections of 4 to 9 tabs: Scheduling, Registration and clearance, Documentation and coding, Charges and release, Denials, Claims and cash, Cases and disputes, Patient finance and compliance
+- Sidebar grouped under the three loops (Access, Clinical revenue, Billing and recovery)
+- New first screen "Who are you today?": 28 job roles plus a tester role, grouped, searchable, each with a one-line job and open-task count; replaces the Acting-as drop-down
+- Top bar shows a compact role chip; clicking it (or the name at the bottom of the sidebar) reopens the picker
+- All existing links and hashes keep working
+
 
 ## v0.4.0 - Remaining Provider screens (53 of 53)
 - Recovery workspace: Underpayments, Audits (recoupment reopens a closed case), Disputes (independent dispute resolution and estimate disputes)
