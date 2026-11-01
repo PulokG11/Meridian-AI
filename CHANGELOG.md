@@ -2,6 +2,15 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v0.6.0 - Four more portals and the last 3 provider roles
+- Provider: 3 new roles (Practice administrator or CFO, Privacy officer, Provider system administrator) with a new section "Leadership, privacy and administration" (Financial health, Cash forecast, Access review, Disclosures, Users and roles, Integrations, Rules) and a Patient requests tab in Patient finance
+- Patient portal, PP01 to PP09: book/reschedule/cancel, intake and consents, insurance and ID, estimate and payment option, pay and plan, questions and disputes, financial assistance, proxy access, statements and receipts (3 patient roles)
+- Payer portal, Y01 to Y08: eligibility, prior authorization, claim adjudication, records requests, appeals, remittance, payment integrity, fee schedules (8 roles). Live provider cases now wait for the payer to decide
+- Clearinghouse portal, C01 to C05 (3 roles) and Platform console, X01 to X05 (3 roles)
+- Role picker has a portal tab row; every portal has Home, a queue per role and an "Other portals" list
+- Shared audit trail (hash chained) records actions across portals; interface downtime is shared between clearinghouse and platform
+- Rollback: `git checkout v0.5.0 -- index.html`
+
 ## v0.5.0 - Navigation and role picker
 - Tabs regrouped into 8 sections of 4 to 9 tabs: Scheduling, Registration and clearance, Documentation and coding, Charges and release, Denials, Claims and cash, Cases and disputes, Patient finance and compliance
 - Sidebar grouped under the three loops (Access, Clinical revenue, Billing and recovery)
