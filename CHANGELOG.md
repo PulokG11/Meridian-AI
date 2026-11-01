@@ -1,6 +1,13 @@
 # Changelog
 
-Each release is a git tag. To roll back: `git checkout v0.2.0 -- index.html` (then commit), or `git revert <commit>`.
+Each release is a git tag. To roll back: `git checkout v0.3.0 -- index.html` (then commit), or `git revert <commit>`.
+
+## v0.4.0 - Remaining Provider screens (53 of 53)
+- Recovery workspace: Underpayments, Audits (recoupment reopens a closed case), Disputes (independent dispute resolution and estimate disputes)
+- New Finance section (6 tabs): Patient accounts (outreach limits, opt-out, dispute pause, overpayment creates a credit), Plans and assistance (poverty-line bands, $25 installment minimum, default), Refunds and credits (return clock, approval limits), Write-offs (open-rights check, bad-debt placement), Compliance (sample, findings routed to authors), Prevention loop (simulate and publish rules)
+- Three more personas (28 in total); ledger now includes refunds, write-offs, awards and assistance
+- Inbox includes finance tasks
+
 
 ## v0.3.0 - Access and Clinical slices
 - New Access section (14 tabs): home, contact console (booking, red-flag and instruction-injection calls), schedule, appointment, referrals, registration, duplicates, eligibility, authorization, estimate, clearance, check-in, reminders, admissions and ED
