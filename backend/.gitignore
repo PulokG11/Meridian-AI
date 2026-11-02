@@ -1,0 +1,3 @@
+*.local.md
+*.generated.sql
+.env*
