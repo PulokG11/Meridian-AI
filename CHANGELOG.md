@@ -2,6 +2,22 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.0.0 - Real backend wiring for Cases + Denials, real sign-in
+- index.html's Cases + Denials loop (20 ACT.* functions, the hardcoded demo claims) is wired to the real Supabase backend from v7.1.0: real Postgres auth, real RLS-enforced permissions, the 15 real seeded cases instead of client-side simulation
+- New sign-in screen: a real Email / Password / Login form (Supabase Auth) replaces the old no-credential "choose a portal, then a role" picker; signing in looks up the account's role in `app.app_user` and routes straight to that role's dashboard. "Explore as the tester" still works with no sign-in
+- New Edge Function proxy (`backend/supabase/functions/api/index.ts`, Task 12) fronts every `api.cmd_*` command: forwards the caller's own JWT (never the service role), maps backend refusals (MR001-MR005) to HTTP 409/422/403/404/400
+- 17 of 20 Cases+Denials actions now call real backend commands (triage confirm, draft, send to approval, approve/return, release, payer-simulate, post remittance, allocate deposit, reconcile/close, reopen/recoupment, patient payment) and refresh the case's live stage from `api.case_stage()` after each call
+- Left as explicit client-only placeholders (toast "not wired"): AR follow-up, the reconciliation variance write-off branch, patient-statement sending, supervisor overrides, scheduling-provided authorization numbers, and ad-hoc deposit creation (none of these have a backend command yet)
+- Added 3 "Payer rep" test personas (`payer-a-rep`/`-b-rep`/`-c-rep`@meridian.test) so the payer-side simulate actions (`appeal.record_decision`, `records_request.decide`) can actually be exercised
+- Removed the old two-step portal-then-role picker (`rolesPage`, `ACT.pick`'s role grid, `ACT.start`/`ACT.portalStart`) and the no-credential persona `<select>`; "Switch role" now returns to the sign-in screen
+- Other portals (patient/payer/clearinghouse/platform, Access/Clinical) are unchanged in this release - still client-side simulation, no backend exists for them yet
+- Rollback: `git checkout v7.1.0 -- index.html` (keeps the backend; returns the frontend to pure simulation)
+
+## v7.1.0 - Backend: Supabase schema, commands, reference seed, case data
+- Tag added retroactively for commit 5a50075 (previously untagged): Postgres schema (app/ref/audit/api), RLS, 26 `api.cmd_*` command functions covering the Cases + Denials recovery loop, the reference seed (roles, permissions, payers, 48 test users), and the 15 real seeded cases replayed through real commands (Tasks 1-10)
+- No frontend change in this commit; index.html still ran as pure client-side simulation until v8.0.0
+- Rollback: `git checkout v7.0.0` (drops the backend entirely; nothing in the frontend depended on it yet)
+
 ## v7.0.0 - Fifteen cases linked across the five portals
 - Ten new synthetic provider cases (CLM-24201 to CLM-24210) join the original five, covering all four paths (corrected claim, evidence, appeal, coverage update) and stages from triage to a reopened case
 - Patient portal: statements, claims status and balances now come from the linked cases (Alex Morgan, Riley Morgan, Sam Okoye). A patient payment clears the provider's closure blocker; a patient dispute blocks closure

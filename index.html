@@ -202,9 +202,9 @@ function diagram(){const lanes=['EHR','Claim','Payer','Finance'],W=560,H=320,x0=
  let dots=pts.map((p,i)=>{const [x,y]=P[i],up=[1,0,0,1,1,0,0,0][i];const anchor=x>470?'end':x<130?'start':'middle';if(i===6)return `<circle cx="${x}" cy="${y}" r="5.5" fill="#2CC4B0" stroke="#0F1B2D" stroke-width="2"/><text x="${x-12}" y="${y+4}" text-anchor="end" fill="#F2F6FB" font-size="11" font-weight="600">Deposit <tspan fill="#7F93AD" font-weight="400">Sep 9</tspan></text>`;return `<circle cx="${x}" cy="${y}" r="5.5" fill="#2CC4B0" stroke="#0F1B2D" stroke-width="2"/><text x="${x}" y="${y+(up?-12:20)}" text-anchor="${anchor}" fill="#F2F6FB" font-size="11" font-weight="600">${p[3]}</text><text x="${x}" y="${y+(up?-24:32)}" text-anchor="${anchor}" fill="#7F93AD" font-size="10">${p[4]}</text>`}).join('');
  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="One claim traced across EHR, claim, payer and finance lanes">${g}${mon}<path d="${path}" fill="none" stroke="#2CC4B0" stroke-width="2" stroke-dasharray="1 0" opacity=".85"/>${dots}</svg>`}
 function landing(){return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="#06201C" stroke-width="2" stroke-linecap="round"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle workspace for a custom EHR</small></div></div>
-<nav><a data-act="scroll:how">How it works</a><a data-act="scroll:out">Three outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Open prototype','p','data-go="roles"')}</nav></div>
+<nav><a data-act="scroll:how">How it works</a><a data-act="scroll:out">Three outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Open prototype','p','data-go="login"')}</nav></div>
 <section class="hero"><div><span class="eyebrow">Claim · denial · appeal · recovery</span><h1>One line from the encounter to the deposit.</h1><p class="lead">A meridian is a shared reference line. In Meridian AI the claim and its history are that line. The biller sees what was submitted, the appeals specialist sees what the payer disputed, and finance traces the payment back to the same service line.</p>
-<div class="cta">${btn('Open the prototype','p lg','data-go="roles"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
+<div class="cta">${btn('Open the prototype','p lg','data-go="login"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
 <div class="diagram">${diagram()}<div class="cap"><span>CLM-23988 · line 2 · CPT 72158 · $3,050</span><span>Same service line, four systems</span></div></div></section></div>
 <section class="band alt" id="how"><div class="wrap"><h2>Three people look at one claim and see three different things.</h2><p class="sub">Meridian puts their views on one history, so nobody re-keys a claim number to find out what happened to it.</p>
 <div class="three"><div class="fact"><h3>Biller</h3><p>Sees what was submitted, which acknowledgments came back and what the payer received.</p><span class="mono">837P · 999 · 277CA</span></div><div class="fact"><h3>Appeals specialist</h3><p>Sees what the payer disputed, what the chart supports and what is still missing.</p><span class="mono">CARC / RARC · chart evidence</span></div><div class="fact"><h3>Finance</h3><p>Sees which deposit paid which service line, and what is left unallocated.</p><span class="mono">835 · EFT trace · DEP · ledger</span></div></div></div></section>
@@ -218,7 +218,7 @@ function landing(){return `<div class="lp"><div class="wrap"><div class="lnav"><
 <div class="grid k4">${kpi('Median analyst minutes per resolved case','38','n','','target 30')}${kpi('Filing deadlines missed','6','d','','of 318 eligible')}${kpi('Unsupported statements per reviewed draft','0.13','w','','14 in 112 drafts')}${kpi('Reconciled cash per eligible denied dollar','$0.31','s','','Q2-26 cohort')}</div>
 <div class="cta" style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">${btn('See the analytics','s2','data-go="analytics"')}${btn('Browse 15 process workflows','s2','data-go="flows"')}</div></div></section>
 <section class="band alt" id="scope"><div class="wrap"><h2>What this prototype covers.</h2><div class="scope" style="margin-top:20px"><div><h3>In the prototype</h3><ul><li>Dashboard, task inbox, eight sections of 4 to 9 tabs each across the three loops, Workflows, Users, Analytics and Settings</li><li>Access (14 tabs) and Clinical revenue (11 tabs): five visits from first call to a released claim, with authorization, estimate, clearance, coding, holds and enrollment gates</li><li>Finance (6 tabs) and Recovery additions (Underpayments, Audits, Disputes): patient accounts, assistance, plans, refunds, write-offs, compliance sampling and the prevention loop</li><li>Twenty-eight provider personas with permissions, approval limits and separation of duties</li><li>Five synthetic cases that run the full loop to a closed case, including a corrected claim, an evidence request and a payer takeback that reopens a case</li><li>Approval gate, unsupported-statement block and per-stage metrics</li></ul></div><div><h3>Left to implementation</h3><ul><li>Payer-specific filing rules and real timelines</li><li>Production integrations with the EHR, clearinghouse, payers and bank</li><li>Role permissions and approval limits (the values shown are examples)</li><li>Interaction polish and transitions</li></ul></div></div></div></section>
-<div class="wrap"><div class="foot">Meridian AI is a working name and open to change. This is a clickable prototype with synthetic data. ${btn('Open the prototype','p sm','data-go="roles"')}</div></div></div>`}
+<div class="wrap"><div class="foot">Meridian AI is a working name and open to change. This is a clickable prototype with synthetic data. ${btn('Open the prototype','p sm','data-go="login"')}</div></div></div>`}
 /* ====== dashboard ====== */
 function dashboard(){
  const open=IDS.filter(i=>stg(i)<8);const pend=IDS.filter(i=>S.pend[i]);const nPend=pend.length+pendingWos().length;
@@ -422,7 +422,7 @@ function shell(active,title,sub,acts,body){const p=P();const ini=p.id==='tester'
  return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>
 ${NAV.map(([n,g])=>`<button class="nav ${n===active?'on':''}" data-go="${g}"><i></i>${n}${n==='Inbox'&&nT?` <span class="bd i" style="margin-left:auto">${nT}</span>`:''}</button>`).join('')}<div class="grow"></div>
 <div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><div class="me"><div class="av">${ini}</div><div><b>${p.name}</b><small>${p.role}</small></div></div></aside>
-<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><label class="actas">Acting as <select id="persona" aria-label="Acting as">${personaOptions()}</select></label><span class="pill">Cohort Q2-26 · 180-day window</span>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
+<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><span class="actas">Signed in as ${p.id==='tester'?'the tester':p.role+' · '+p.name}</span>${btn('Switch','s2 sm','data-go="login"')}<span class="pill">Cohort Q2-26 · 180-day window</span>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
 <main class="content"><div class="ph"><div><h1>${title}</h1><p>${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div></div>`}
 function wsShell(tab,sub,acts,body,noCase){const bar=noCase?'':`<div class="casebar"><span class="lbl">Case</span>${IDS.map(i=>`<button class="chip ${i===S.cur?'on':''}" data-act="cur:${i}"><span class="mono">${i}</span>${S.closed[i]?bd('s','closed'):stg(i)>=8?bd('s','reconciled'):bd(TONE[PATH[CL[i].path][0]],PATH[CL[i].path][1])}</button>`).join('')}</div>`;
  const tb=(t,i)=>`${i===9?'<span class="tabsep" aria-hidden="true"></span>':''}<button class="tab ${t===tab?'on':''}" role="tab" data-go="ws:${t}">${t}</button>`;
@@ -663,6 +663,305 @@ close:()=>{$('#modal').hidden=true;return 'keep'},
 doinvite:()=>{S.invited.push([$('#in-n').value||'New user',$('#in-r').value,'Assigned by role','Suggest only','Invited']);$('#modal').hidden=true;toast('Invite recorded (synthetic). No email is sent.')},
 scroll:id=>{const e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth'});return 'keep'}
 };
+/* ====== backend wiring: real auth + api.cmd_* calls for Cases + Denials (Task 12 / frontend integration) ====== */
+const SUPA_URL='https://hsmasegexwidctofujcc.supabase.co';
+const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzbWFzZWdleHdpZGN0b2Z1amNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NDA2MTMsImV4cCI6MjEwOTExNjYxM30.rtToCsdOmGic61-wzhtg_PV4hwoX-rcPA9UoLNgSeXY';
+let sb=null;
+const sbReady=import('https://esm.sh/@supabase/supabase-js@2').then(m=>{sb=m.createClient(SUPA_URL,SUPA_ANON);return sb}).catch(e=>{console.error('Failed to load supabase-js',e)});
+const CASE_ID={'CLM-24017':'01a19cae-ddf6-7c92-9b80-bc25b4a73096','CLM-24033':'01a19cae-de1b-70d3-83fa-b09ddf43180c','CLM-24051':'01a19cae-de21-719a-a61b-44b2ef1baeac','CLM-24068':'01a19cae-de29-7969-88a4-3af4c747f389','CLM-23988':'01a19cae-de2f-77ab-8d03-3d9f4dc21a31','CLM-24201':'01a19cae-de7c-744f-bd25-241c2ceff8c8','CLM-24202':'01a19cae-de81-787d-9b1b-d33d48200b21','CLM-24203':'01a19cae-dea4-78e8-8bc7-b325f8ec2fff','CLM-24204':'01a19cae-deb5-771c-bf84-b0c1cd53a927','CLM-24205':'01a19cae-dec4-7663-87cc-ea1d2dac13f0','CLM-24206':'01a19cae-dece-7192-a663-6035b17971f8','CLM-24207':'01a19cae-ded5-7807-85f6-ac0332f5afd2','CLM-24208':'01a19cae-deff-7e5a-a273-a36b6408f2c4','CLM-24209':'01a19cae-df0f-7440-a556-6e3e24fab226','CLM-24210':'01a19cae-df19-7c49-be5a-7a9a027f9280'};
+const PATH_CMD={corrected:'correction',cob:'correction',appeal:'appeal',evidence:'evidence'};
+const PERSONA_EMAIL={'py-a':'payer-a-rep@meridian.test','py-b':'payer-b-rep@meridian.test','py-c':'payer-c-rep@meridian.test'};
+const LIVE={};
+
+function idemKey(){try{return crypto.randomUUID()}catch(e){return 'k-'+Date.now()+'-'+Math.random().toString(36).slice(2)}}
+
+async function doLogin(roleKey){
+ await sbReady; if(!sb){toast('Backend client failed to load.');return false}
+ if(roleKey==='tester'){try{await sb.auth.signOut()}catch(e){}return true}
+ const email=PERSONA_EMAIL[roleKey]||(roleKey+'@meridian.test');
+ let pw=sessionStorage.getItem('meridianPw');
+ if(!pw){pw=prompt('Shared test password for '+email+':');if(!pw)return false;sessionStorage.setItem('meridianPw',pw)}
+ const {error}=await sb.auth.signInWithPassword({email,password:pw});
+ if(error){sessionStorage.removeItem('meridianPw');toast('Sign-in failed for '+email+': '+error.message);return false}
+ return true;
+}
+
+async function callCommand(name,args){
+ await sbReady; if(!sb)throw new Error('backend client not loaded');
+ const {data:sess}=await sb.auth.getSession();
+ const token=sess&&sess.session&&sess.session.access_token;
+ if(!token){toast('Sign in as a real role first.');throw new Error('not_signed_in')}
+ let res,body;
+ try{
+  res=await fetch(SUPA_URL+'/functions/v1/api/'+name,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token,'Idempotency-Key':idemKey()},body:JSON.stringify(args||{})});
+  body=await res.json().catch(()=>({}));
+ }catch(e){toast('Network error calling '+name+'.');throw e}
+ if(!res.ok){const er=(body&&body.error)||{};toast('Blocked: '+(er.todo||er.rule||('HTTP '+res.status)));const err=new Error(er.rule||'command_failed');err.detail=er;throw err}
+ return body;
+}
+
+async function syncLive(id){
+ await sbReady; if(!sb)return;
+ const case_id=CASE_ID[id];if(!case_id)return;
+ const live=LIVE[id]=LIVE[id]||{};
+ live.case_id=case_id;
+ try{
+  const {data:cs}=await sb.schema('app').from('case').select('status').eq('case_id',case_id).maybeSingle();
+  live.case_status=cs&&cs.status;
+  const {data:cc}=await sb.schema('app').from('case_claim').select('claim_id').eq('case_id',case_id).limit(1).maybeSingle();
+  const curClaimId=cc&&cc.claim_id;
+  live.claim_id=curClaimId;
+  const {data:cur}=curClaimId?await sb.schema('app').from('claim').select('claim_id,original_claim_id,status').eq('claim_id',curClaimId).maybeSingle():{data:null};
+  const origId=(cur&&cur.original_claim_id)||curClaimId;
+  live.orig_claim_id=origId;
+  const {data:den}=origId?await sb.schema('app').from('denial').select('denial_id,status').eq('claim_id',origId).order('received_at',{ascending:false}).limit(1).maybeSingle():{data:null};
+  live.denial_id=den&&den.denial_id;live.denial_status=den&&den.status;
+  if(live.denial_id){
+   const {data:ap}=await sb.schema('app').from('appeal').select('appeal_id,status').eq('denial_id',live.denial_id).is('parent_appeal_id',null).maybeSingle();
+   live.appeal_id=ap&&ap.appeal_id;live.appeal_status=ap&&ap.status;
+   const {data:rr}=await sb.schema('app').from('records_request').select('records_request_id,status').eq('denial_id',live.denial_id).order('created_at',{ascending:false}).limit(1).maybeSingle();
+   live.rr_id=rr&&rr.records_request_id;live.rr_status=rr&&rr.status;
+  }else{live.appeal_id=null;live.rr_id=null}
+  const {data:repl}=origId?await sb.schema('app').from('claim').select('claim_id,status').eq('original_claim_id',origId).order('created_at',{ascending:false}).limit(1).maybeSingle():{data:null};
+  live.repl_claim_id=repl&&repl.claim_id;live.repl_status=repl&&repl.status;
+  const workClaimId=live.repl_claim_id||curClaimId;
+  live.work_claim_id=workClaimId;
+  const {data:workClaim}=workClaimId?await sb.schema('app').from('claim').select('payer_id').eq('claim_id',workClaimId).maybeSingle():{data:null};
+  live.payer_id=workClaim&&workClaim.payer_id;
+  const {data:lines}=workClaimId?await sb.schema('app').from('claim_service_line').select('claim_service_line_id,line_number').eq('claim_id',workClaimId).order('line_number'):{data:[]};
+  live.lines=lines||[];
+  if(live.appeal_id){
+   const {data:ar}=await sb.schema('app').from('approval_request').select('approval_request_id,status').eq('subject_type','appeal').eq('subject_id',live.appeal_id).order('requested_at',{ascending:false}).limit(1).maybeSingle();
+   live.appeal_ar_id=ar&&ar.approval_request_id;live.appeal_ar_status=ar&&ar.status;
+  }else{live.appeal_ar_id=null}
+  const {data:rem}=workClaimId?await sb.schema('app').from('remittance_line').select('remittance_id').eq('claim_id',workClaimId).limit(1).maybeSingle():{data:null};
+  live.remittance_id=rem&&rem.remittance_id;
+  live.remittance_status=null;
+  if(live.remittance_id){
+   const {data:rr2}=await sb.schema('app').from('remittance').select('status,payer_id').eq('remittance_id',live.remittance_id).maybeSingle();
+   live.remittance_status=rr2&&rr2.status;live.remittance_payer_id=rr2&&rr2.payer_id;
+  }
+  const {data:da}=live.remittance_id?await sb.schema('app').from('deposit_allocation').select('deposit_id').eq('remittance_id',live.remittance_id).limit(1).maybeSingle():{data:null};
+  live.deposit_id=da&&da.deposit_id;
+  const {data:resp}=workClaimId?await sb.schema('app').from('patient_responsibility').select('patient_responsibility_id,amount').eq('claim_id',workClaimId).order('created_at',{ascending:false}).limit(1).maybeSingle():{data:null};
+  live.resp_id=resp&&resp.patient_responsibility_id;live.resp_amount=resp&&resp.amount;
+  const {data:stage}=await sb.schema('api').rpc('case_stage',{p_case_id:case_id});
+  live.stage=stage;
+  if(typeof stage==='number'){S.st[id]=stage;if(stage>=1)S.tri[id]=1}
+  S.pend[id]=!!(live.appeal_ar_status==='pending'||live.rr_status==='sent'||live.rr_status==='responded');
+  if(live.case_status==='closed'){if(!S.closed[id])S.closed[id]={reason:'Reconciled (from the backend).'}}else{delete S.closed[id]}
+ }catch(e){console.error('syncLive failed for',id,e)}
+}
+
+ACT.cur=async id=>{S.cur=id;await syncLive(id)};
+const _open0=ACT.open;
+ACT.open=async a=>{_open0(a);const [i]=a.split(':');if(IDS.includes(i))await syncLive(i)};
+ACT.persona=async id=>{const ok=await doLogin(id);if(!ok)return 'keep';S.persona=id;S.inboxAll=false;toast(id==='tester'?'Acting as the tester (all roles).':'Signed in as '+P().name+', '+P().role+'.');if(IDS.includes(S.cur))await syncLive(S.cur)};
+
+ACT.tri=async a=>{const [k,id]=a.split(':');
+ if(k==='ok'){
+  if(!can('tri'))return deny('tri');
+  const live=LIVE[id]||{};
+  if(!live.denial_id){toast('No denial on file for this case yet.');return 'keep'}
+  try{await callCommand('denial.confirm_path',{denial_id:live.denial_id,path:PATH_CMD[CL[id].path]})}catch(e){return 'keep'}
+  await syncLive(id);
+  toast('Path confirmed. The case can move to drafting.');
+  return;
+ }
+ toast('Supervisor overrides are not wired to the backend in this pass.');return 'keep';
+};
+
+ACT.draft=async id=>{
+ if(!can('draft'))return deny('draft');
+ if(!S.tri[id]){toast('Confirm the path in Triage first (H17).');return 'keep'}
+ const live=LIVE[id]||{};
+ const path=CL[id].path;
+ try{
+  if(path==='appeal'){
+   const stmts=(S.stm[id]||[]).map(s=>{const o={text:s.t};if(s.src)o.source_ref='claim:'+(live.orig_claim_id||'');return o});
+   if(!stmts.length){toast('No statements drafted for this appeal yet.');return 'keep'}
+   await callCommand('appeal.draft',{denial_id:live.denial_id,statements:stmts});
+  }else if(path==='corrected'||path==='cob'){
+   if(!live.orig_claim_id){toast('No claim on file for this case.');return 'keep'}
+   await callCommand('claim.create_replacement',{original_claim_id:live.orig_claim_id});
+  }else if(path==='evidence'){
+   if(!live.denial_id){toast('No denial on file for this case.');return 'keep'}
+   const r=await callCommand('evidence.assemble',{denial_id:live.denial_id,items:[{kind:'medical_record',title:'Evidence packet assembled from the chart',source_ref:'claim:'+(live.orig_claim_id||'')}]});
+   live.evidence_item_ids=(r&&r.created_ids)||[];
+  }
+ }catch(e){return 'keep'}
+ lg(id,'AI drafted the '+NM[CL[id].path]+'; analyst reviewed',5);
+ await syncLive(id);
+ toast('Meridian AI drafted the '+NM[CL[id].path]+'. Review it, then send to approval.');
+};
+
+ACT.sendappr=async id=>{
+ if(!can('send'))return deny('send');
+ const g=gateWhy(id);if(g){toast('Blocked: '+g);return 'keep'}
+ const live=LIVE[id]||{};
+ const path=CL[id].path;
+ try{
+  if(path==='appeal'){
+   if(!live.appeal_id){toast('No appeal drafted yet.');return 'keep'}
+   await callCommand('appeal.request_approval',{appeal_id:live.appeal_id});
+  }else if(path==='evidence'){
+   if(!live.rr_id){toast('No records request is open for this case yet (the payer has not asked for records).');return 'keep'}
+   if(!live.evidence_item_ids||!live.evidence_item_ids.length){toast('Draft the evidence packet first.');return 'keep'}
+   await callCommand('records_request.respond',{records_request_id:live.rr_id,evidence_item_ids:live.evidence_item_ids,note:'Evidence packet attached'});
+  }else{
+   toast('Corrected and COB claims release directly; use Release once drafted.');return 'keep';
+  }
+ }catch(e){return 'keep'}
+ lg(id,'Sent to approval (H18)',1);
+ await syncLive(id);
+ toast('Sent to approval. A reviewer must approve it.');
+};
+
+ACT.approve=async id=>{
+ const live=LIVE[id]||{};
+ if(!live.appeal_ar_id){toast('No approval request pending for this case.');return 'keep'}
+ try{await callCommand('approval.decide',{approval_request_id:live.appeal_ar_id,decision:'approved'})}catch(e){return 'keep'}
+ lg(id,'Approved within limit (H18 passed)',2);
+ await syncLive(id);
+ toast('Approved. Release it from the Submission tab.');
+};
+ACT.ret=async id=>{
+ const live=LIVE[id]||{};
+ if(!live.appeal_ar_id){toast('No approval request pending for this case.');return 'keep'}
+ try{await callCommand('approval.decide',{approval_request_id:live.appeal_ar_id,decision:'rejected',reason:'Returned to the author for revision'})}catch(e){return 'keep'}
+ lg(id,'Returned to the author',1);
+ await syncLive(id);
+ toast('Returned to the author with a note.');
+};
+
+ACT.release=async id=>{
+ if(!can('release'))return deny('release');
+ const live=LIVE[id]||{};
+ try{
+  if(CL[id].path==='appeal'){
+   if(!live.appeal_id){toast('No appeal to release for this case.');return 'keep'}
+   await callCommand('appeal.file',{appeal_id:live.appeal_id});
+  }else{
+   const claimId=live.repl_claim_id||live.claim_id;
+   if(!claimId){toast('No claim to release for this case.');return 'keep'}
+   await callCommand('claim.release',{claim_id:claimId});
+   await callCommand('claim.submit',{claim_id:claimId});
+  }
+ }catch(e){return 'keep'}
+ lg(id,'Released to the payer; 999 and 277CA accepted',1);
+ await syncLive(id);
+ toast('Released. Transaction built; 999 and 277CA accepted.');
+};
+
+ACT.sim=async id=>{
+ const live=LIVE[id]||{};
+ const path=CL[id].path;
+ try{
+  if(path==='appeal'){
+   if(!live.appeal_id){toast('No filed appeal to decide for this case.');return 'keep'}
+   await callCommand('appeal.record_decision',{appeal_id:live.appeal_id,decision:'overturned_in_part',amount:CL[id].paid});
+  }else if(path==='evidence'){
+   if(!live.rr_id){toast('No records request to decide for this case.');return 'keep'}
+   await callCommand('records_request.decide',{records_request_id:live.rr_id,decision:'accepted',reason:'Complete'});
+  }else{
+   toast('This path resolves once the payer’s remittance is posted; use "Post 835 remittance" directly.');
+   return 'keep';
+  }
+ }catch(e){return 'keep'}
+ lg(id,'Payer decision recorded',1,'Payer simulator');
+ await syncLive(id);
+ toast('Simulated: payer responded.');
+};
+
+ACT.post=async id=>{
+ if(!can('post'))return deny('post');
+ const live=LIVE[id]||{};
+ if(!live.lines||!live.lines.length){toast('No service lines on file to post against.');return 'keep'}
+ const c=CL[id],k=CLS[id]||{};
+ const totalBilled=c.lines.reduce((s,l)=>s+l[3],0)||1;
+ const remLines=live.lines.map((ll,i)=>{
+  const src=c.lines[i]||c.lines[c.lines.length-1];
+  const share=src[3]/totalBilled;
+  const paid=Math.round(c.paid*share*100)/100;
+  const adj=Math.round((k.adj||0)*share*100)/100;
+  const o={claim_id:live.work_claim_id,line_id:ll.claim_service_line_id,paid,adjustment:adj,group_code:'CO',carc:(c.carc||'45').replace('CO-','')};
+  if(k.pt)o.patient_share=Math.round(k.pt*share*100)/100;
+  return o;
+ });
+ try{
+  const r=await callCommand('remittance.receive',{interchange_trace:'TRN-'+id,payer_id:live.payer_id,control_total:c.paid,lines:remLines});
+  await callCommand('remittance.post',{remittance_id:r.remittance_id});
+ }catch(e){return 'keep'}
+ lg(id,'Posted the 835 to the service lines (H15)',3);
+ await syncLive(id);
+ toast('835 posted to the service lines.');
+};
+
+ACT.alloc=async id=>{
+ if(!can('alloc'))return deny('alloc');
+ const live=LIVE[id]||{};
+ if(!live.remittance_id){toast('No remittance posted yet for this case.');return 'keep'}
+ if(!live.deposit_id){toast('No bank deposit is on file for this payer yet. Deposit intake is not modeled as a command in this release, so only cases seeded with a deposit can be allocated.');return 'keep'}
+ try{
+  const {data:remLines}=await sb.schema('app').from('remittance_line').select('line_id,paid').eq('remittance_id',live.remittance_id);
+  for(const rl of (remLines||[])){
+   if(rl.paid>0)await callCommand('deposit.allocate',{deposit_id:live.deposit_id,remittance_id:live.remittance_id,line_id:rl.line_id,amount:rl.paid});
+  }
+ }catch(e){return 'keep'}
+ lg(id,'Allocated to deposit '+(CL[id].dep||live.deposit_id)+' (H20)',2);
+ await syncLive(id);
+ toast('Allocated to deposit.');
+};
+
+ACT.recon=async id=>{
+ if(!can('recon'))return deny('recon');
+ const live=LIVE[id]||{};
+ try{await callCommand('case.close',{case_id:live.case_id||CASE_ID[id],reason:'Reconciled; '+NM[CL[id].path]+' resolved the denial'})}catch(e){return 'keep'}
+ lg(id,'Confirmed reconciliation',1);
+ await syncLive(id);
+ toast('Reconciled. '+$m(CL[id].paid)+' traced from the service line to the ledger.');
+ const k=CLS[id];
+ if(k&&k.type==='writeoff'&&!S.wos[id]){
+  S.wos[id]={id:'WO-'+(320+IDS.indexOf(id)),amt:k.adj,st:'pending'};
+  lg(id,'Requested write-off '+S.wos[id].id+' for the '+$m(k.adj)+' variance (not wired to the backend in this pass)',1,'System');
+ }
+};
+
+ACT.cls=async a=>{const [k,id]=a.split(':');
+ const live=LIVE[id]||{};
+ if(k==='stmt'){if(!can('pat'))return deny('pat');S.pat[id]='statement';lg(id,'Sent patient statement for '+$m((CLS[id]||{}).pt||0),2);toast('Statement sent (simulated). Patient-statement sending is not wired to the backend in this pass.');return}
+ if(k==='paid'){
+  if(!can('pat'))return deny('pat');
+  if(!live.resp_id){toast('No patient balance on file for this case.');return 'keep'}
+  try{await callCommand('patient_payment.apply',{patient_responsibility_id:live.resp_id,amount:live.resp_amount,method:'other'})}catch(e){return 'keep'}
+  S.pat[id]='paid';lg(id,'Recorded patient payment '+$m((CLS[id]||{}).pt||0),2);
+  await syncLive(id);toast('Patient payment recorded.');return;
+ }
+ if(k==='close'){
+  if(!can('close'))return deny('close');
+  if(S.closed[id]){toast('Already closed.');return}
+  try{await callCommand('case.close',{case_id:live.case_id||CASE_ID[id],reason:'Recovered after denial'})}catch(e){return 'keep'}
+  lg(id,'Closed the case (H21 passed)',2);
+  await syncLive(id);toast('Case closed.');return;
+ }
+ if(k==='take'){
+  try{await callCommand('case.reopen',{case_id:live.case_id||CASE_ID[id],trigger:'recoupment',reason:'Payer post-payment audit recoupment'})}catch(e){return 'keep'}
+  lg(id,'Payer takeback reopened the case (trigger: recoupment)',1,'Payer simulator');
+  await syncLive(id);toast('Reopened: payer recoupment.');return;
+ }
+ if(k==='acc'){
+  const lineIds=(live.lines||[]).map(l=>l.claim_service_line_id);
+  if(!lineIds.length){toast('No service lines on file to reverse a posting against.');return 'keep'}
+  const {data:postings}=await sb.schema('app').from('payment_posting').select('payment_posting_id,line_id,kind').in('line_id',lineIds).eq('kind','payment').order('created_at',{ascending:false}).limit(1);
+  const orig=postings&&postings[0];
+  if(!orig){toast('No original posting found to reverse.');return 'keep'}
+  try{await callCommand('posting.reverse',{payment_posting_id:orig.payment_posting_id,reason:'Recoupment accepted'})}catch(e){return 'keep'}
+  lg(id,'Accepted the recoupment and posted a reversal',2);
+  await syncLive(id);toast('Recoupment posted. The case can close again.');
+ }
+};
+
+PERS.push({id:'py-a',name:'Payer A rep (seed)',role:'Payer A claims rep',key:'py4',lim:0,g:'Payer'},{id:'py-b',name:'Payer B rep (seed)',role:'Payer B claims rep',key:'py4',lim:0,g:'Payer'},{id:'py-c',name:'Payer C rep (seed)',role:'Payer C claims rep',key:'py4',lim:0,g:'Payer'});
 /* ====== Access and Clinical slices ====== */
 PERS.push(
 {id:'contact',name:'Nora Vance',role:'Contact center agent',key:'contact',lim:0,g:'Access'},{id:'sched',name:'Tom Reyes',role:'Scheduler',key:'sched',lim:0,g:'Access'},{id:'reg',name:'Lena Park',role:'Registrar',key:'reg',lim:0,g:'Access'},{id:'ver',name:'Omar Haidar',role:'Verification specialist',key:'ver',lim:0,g:'Access'},{id:'auth',name:'Ruth Adler',role:'Authorization specialist',key:'auth',lim:0,g:'Access'},{id:'fc',name:'Ivy Tran',role:'Financial counselor',key:'fc',lim:0,g:'Access'},{id:'am',name:'Carl Dumas',role:'Patient access manager',key:'am',lim:2500,g:'Access'},
@@ -889,7 +1188,7 @@ const CLW={Encounter:clEnc,Queries:clQueries,'Utilization review':clUR,CDI:clCDI
 /* ====== Finance slice: underpayments, audits, disputes, patient accounts, plans, refunds, write-offs, compliance, prevention ====== */
 PERS.push({id:'cua',name:'Noel Baptiste',role:'Contract and underpayment analyst',key:'cua',lim:0,g:'Finance'},{id:'pfs',name:'Kim Alvarez',role:'Patient financial services rep',key:'pfs',lim:0,g:'Finance'},{id:'ref',name:'Zoe Hart',role:'Refund and credit specialist',key:'ref',lim:0,g:'Finance'});
 Object.assign(PERM,{up:['cua','ar','mgr'],aud:['appeals','him','mgr'],audsend:['sup','mgr'],disp:['appeals','cua','mgr'],pf:['pfs','ar','billing','fin','mgr'],plan:['pfs','fc','mgr'],refd:['ref','fin','sup','mgr'],wr:['denials','appeals','fin','sup','mgr','pfs','cua'],cmp:['comp'],ruleprop:['am','ri','mgr','sup'],rule:['am','mgr']});
-personaOptions=function(){const g=(t,f)=>`<optgroup label="${t}">${PERS.filter(f).map(x=>`<option value="${x.id}" ${x.id===S.persona?'selected':''}>${x.role}${x.id==='tester'?'':' · '+x.name}</option>`).join('')}</optgroup>`;return g('Test',p=>p.id==='tester')+g('Recovery',p=>!p.g&&p.id!=='tester')+g('Access',p=>p.g==='Access')+g('Clinical revenue',p=>p.g==='Clinical')+g('Patient financial and finance',p=>p.g==='Finance')};
+personaOptions=function(){const g=(t,f)=>`<optgroup label="${t}">${PERS.filter(f).map(x=>`<option value="${x.id}" ${x.id===S.persona?'selected':''}>${x.role}${x.id==='tester'?'':' · '+x.name}</option>`).join('')}</optgroup>`;return g('Test',p=>p.id==='tester')+g('Recovery',p=>!p.g&&p.id!=='tester')+g('Access',p=>p.g==='Access')+g('Clinical revenue',p=>p.g==='Clinical')+g('Patient financial and finance',p=>p.g==='Finance')+g('Payer (simulate payer decisions)',p=>p.g==='Payer')};
 const PFV=['Patient accounts','Plans and assistance','Refunds and credits','Write-offs','Compliance','Prevention loop'];
 const fpl=h=>15000+5000*(Math.max(1,h)-1);
 const bandOf=pct=>pct<=200?[100,'Up to 200% of the poverty line: full discount']:pct<=300?[50,'201% to 300%: 50% discount']:pct<=400?[25,'301% to 400%: 25% discount']:[0,'Above 400%: no discount'];
@@ -999,8 +1298,8 @@ function navHtml(active,sid,nT){const b=(n,g,on,x)=>`<button class="nav ${on?'on
  return h+`<div class="navh">More</div>`+NAVBOT.map(([n,g])=>b(n,g,!sid&&n===active)).join('')}
 shell=function(active,title,sub,acts,body){const p=P();const ini=p.id==='tester'?'T':p.name.split(' ').map(x=>x[0]).join('').slice(0,2);const nT=tasksFor().filter(t=>p.key==='*'||t.role===p.key).length,sid=secOf(S.view);
  return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>${navHtml(active,sid,nT)}<div class="grow"></div>
-<div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="roles" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
-<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><button class="pill rolechip" data-go="roles" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
+<div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="login" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
+<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><button class="pill rolechip" data-go="login" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
 <main class="content"><div class="ph"><div><h1>${title}</h1><p>${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div></div>`};
 wsShell=function(tab,sub,acts,body,noCase){const v='ws:'+tab,s=secOf(v);const bar=noCase?'':`<div class="casebar"><span class="lbl">Case</span>${IDS.map(i=>`<button class="chip ${i===S.cur?'on':''}" data-act="cur:${i}"><span class="mono">${i}</span>${S.closed[i]?bd('s','closed'):stg(i)>=8?bd('s','reconciled'):bd(TONE[PATH[CL[i].path][0]],PATH[CL[i].path][1])}</button>`).join('')}</div>`;return shell('',s.label,tab+': '+sub,acts,secTabs(v)+bar+body)};
 grpShell=function(grp,tab,sub,acts,body,noV){const v=grp+':'+tab,s=secOf(v);return shell('',s.label,tab+': '+sub,acts,secTabs(v)+(noV||grp==='pf'?'':vbar())+body)};
@@ -1017,7 +1316,6 @@ function rolesPage(){const q=(S.rq||'').toLowerCase();const card=(p)=>{const j=J
  return `<div class="lp"><div class="wrap" style="padding-bottom:56px"><div class="lnav"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>${S.picked?btn('Back to the workspace','s2','data-go="'+(S.prevView||'dashboard')+'"'):''}</div>
  <h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Who are you today?</h1><p class="sub" style="color:var(--fg2);max-width:42em;margin-bottom:18px">Pick a job role. You will see that role’s tasks first, and the app will only let you do what that role is allowed to do. You can switch at any time from the top bar.</p>
  <input class="in" id="rq" placeholder="Search roles, for example appeals or registrar" value="${S.rq||''}" style="width:100%;max-width:420px;margin-bottom:18px" aria-label="Search roles">${groups||'<p class="muted">No role matches.</p>'}</div></div>`}
-ACT.pick=id=>{S.persona=id;S.picked=true;S.inboxAll=false;S.rq='';const h=JOB[id][1];toast('You are '+(id==='tester'?'the tester (all roles)':P().role+' · '+P().name)+'.');go(h);return 'keep'};
 const _pgo=go;go=function(v,top){if(v==='roles'&&S.view!=='roles')S.prevView=S.view;return _pgo(v,top)};
 document.addEventListener('input',e=>{if(e.target.id==='rq'){S.rq=e.target.value;const p=e.target.selectionStart;render();const el=document.getElementById('rq');if(el){el.focus();el.setSelectionRange(p,p)}}});
 /* ====== Portals: leadership, privacy and administration (provider); patient, payer, clearinghouse, platform ====== */
@@ -1088,8 +1386,8 @@ function pshell(port,tab,sub,acts,body){const p=P(),pf=PPFX[port],ini=p.id==='te
  const nav=PNAV[port].map(n=>`<button class="nav ${n===tab?'on':''}" data-go="${pf}:${n}"><i></i>${n}${WFID[n]?` <span class="mono" style="margin-left:auto;font-size:10px;opacity:.65">${WFID[n]}</span>`:''}</button>`).join('');
  const others=Object.keys(PORT).filter(k=>k!==port).map(k=>`<button class="nav" data-act="portal:${k}"><i></i>${PORT[k].name} portal</button>`).join('');
  const pu=port==='patient'&&p.key==='*'?`<span class="pill">Viewing as ${PTN[MX.ptu]}</span>`:'';
- return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>${PORT[port].name} portal</small></div></div>${nav}<div class="navh">Other portals</div>${others}<div class="grow"></div><div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="roles" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
-<div class="main"><header class="top"><span class="pill">${PORT[port].name} portal</span>${pu}<span style="flex:1"></span><button class="pill rolechip" data-go="roles" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}</header>
+ return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>${PORT[port].name} portal</small></div></div>${nav}<div class="navh">Other portals</div>${others}<div class="grow"></div><div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="login" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
+<div class="main"><header class="top"><span class="pill">${PORT[port].name} portal</span>${pu}<span style="flex:1"></span><button class="pill rolechip" data-go="login" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}</header>
 <main class="content"><div class="ph"><div><h1>${tab==='Home'?PORT[port].name+' portal':tab}</h1><p>${WFID[tab]?WFID[tab]+' · ':''}${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div></div>`}
 const gate=(port,body)=>{const p=P();if(p.key==='*'||portalOf(p)===port)return body;return `<div class="flat"><b>${PORT[port].name} portal</b><p class="sec" style="margin:6px 0 10px">You are signed in as ${p.role} (${PORT[portalOf(p)].name.toLowerCase()} portal). Each portal shows only its own users. Pick a role in this portal to continue.</p>${btn('Choose a '+PORT[port].name.toLowerCase()+' role','p','data-act="rtab:'+port+'"')}</div>`};
 const pgd=(port,tab,sub,acts,fn)=>pshell(port,tab,sub,acts,(P().key==='*'||portalOf(P())===port)?(typeof fn==='function'?fn():fn):gate(port));
@@ -1437,18 +1735,61 @@ pl1:['Keep tenants, identity and security healthy.','pl:Identity and access'],pl
 PGRP.push(['Leadership, privacy and administration',['cfo','priv','adm']]);
 const PGRP2={patient:[['Patients and families',['pat','gua','slf']]],payer:[['Eligibility and authorization',['py1','py2','py3']],['Claims and payment',['py4','py5','py6','py7']],['Network and contracts',['py8']]],clearinghouse:[['Clearinghouse',['ch1','ch2','ch3']]],platform:[['Platform',['pl1','pl2','pl3']]]};
 const PGRPTXT={provider:'Everyone who works at a practice or hospital',patient:'Patients, guarantors and caregivers',payer:'Health plans and their vendors',clearinghouse:'Intermediary operators',platform:'Meridian operators and customer admins'};
-rolesPage=function(){const q=(S.rq||'').toLowerCase(),tab=S.rtab||'provider';
- const card1=p=>{const j=JOB[p.id],n=(['cfo','priv','adm'].includes(p.key)||portalOf(p)!=='provider')?PTASK(p.key).length:tasksFor().filter(t=>p.key==='*'||t.role===p.key).length;return `<button class="rc ${p.id===S.persona&&S.picked?'cur':''}" data-act="pick:${p.id}"><b>${p.id==='tester'?'Tester: all roles':p.role}</b>${p.id==='tester'?'<span class="rcs">Recommended for a first tour</span>':`<span class="rcs">${p.name}</span>`}<span class="rcd">${p.id==='tester'?'Do everything in this portal. Switch freely and walk any case from start to finish.':j[0]}</span><span class="rcm">${p.lim?'Approval limit '+$m(p.lim)+' · ':''}${p.id==='tester'?'All actions':n+' open task'+(n===1?'':'s')}</span></button>`};
- const grp=tab==='provider'?PGRP:[['Try everything',['tester']],...PGRP2[tab]];
- const groups=grp.map(([g,ids])=>{const ps=ids.map(i=>PERS.find(x=>x.id===i)).filter(p=>!q||(p.role+' '+p.name+' '+(p.id==='tester'?'tester':JOB[p.id][0])).toLowerCase().includes(q));return ps.length?`<section class="rg"><h2>${g}</h2><div class="rgrid">${ps.map(card1).join('')}</div></section>`:''}).join('');
- return `<div class="lp"><div class="wrap" style="padding-bottom:56px"><div class="lnav"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>${S.picked?btn('Back to the workspace','s2','data-go="'+(S.prevView||'dashboard')+'"'):''}</div>
- <h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Who are you today?</h1><p class="sub" style="color:var(--fg2);max-width:42em;margin-bottom:14px">Pick a portal, then a job role. You will see that role’s tasks first, and the app will only let you do what that role is allowed to do.</p>
- <div class="tabs" role="tablist" aria-label="Portals" style="margin-bottom:14px">${Object.keys(PORT).map(k=>`<button class="tab ${k===tab?'on':''}" role="tab" data-act="rtab:${k}">${PORT[k].name}</button>`).join('')}</div><p class="sec" style="margin-bottom:14px">${PGRPTXT[tab]}</p>
- <input class="in" id="rq" placeholder="Search roles, for example appeals or registrar" value="${S.rq||''}" style="width:100%;max-width:420px;margin-bottom:18px" aria-label="Search roles">${groups||'<p class="muted">No role matches.</p>'}</div></div>`};
-ACT.pick=id=>{S.persona=id;S.picked=true;S.inboxAll=false;S.rq='';let h=JOB[id][1];if(id==='tester'){const t=S.rtab||'provider';h=t==='provider'?'dashboard':PPFX[t]+':Home'}if(id!=='tester')S.rtab=portalOf(P());toast('You are '+(id==='tester'?'the tester (all roles)':P().role+' · '+P().name)+'.');go(h);return 'keep'};
+function loginPage(){
+ return `<div class="lp"><div class="wrap" style="max-width:420px;padding-top:72px;padding-bottom:72px">
+ <div class="brandrow" style="padding:0 0 28px"><div class="mark"></div><div><b>Meridian AI</b><small>Sign in</small></div></div>
+ <div class="card" style="gap:16px">
+  <h3>Sign in to Meridian AI</h3>
+  <label class="f">Email<input class="in" id="login-email" type="email" placeholder="denials@meridian.test" autocomplete="username" value="${S.loginEmail||''}"></label>
+  <label class="f">Password<input class="in" id="login-pw" type="password" placeholder="Password" autocomplete="current-password"></label>
+  ${S.loginErr?`<p class="bad" style="font-size:12.5px">${S.loginErr}</p>`:''}
+  <div class="acts">${btn(S.loginBusy?'Signing in…':'Login','p','data-act="login:go"',S.loginBusy)}${btn('Back','s2','data-go="landing"')}</div>
+  <p class="muted" style="font-size:12px">Synthetic test accounts only. Ask the project owner for credentials.</p>
+  <p class="sec" style="font-size:12.5px">Not sure where to start? ${btn('Explore as the tester','s2 sm','data-act="pick:tester"')} <span class="muted">Opens the provider portal with every role unlocked (no sign-in).</span></p>
+ </div>
+ </div></div>`;
+}
+ACT.login=async a=>{
+ if(a!=='go')return 'keep';
+ const email=((document.getElementById('login-email')||{}).value||'').trim();
+ const pw=(document.getElementById('login-pw')||{}).value||'';
+ S.loginEmail=email;
+ if(!email||!pw){S.loginErr='Enter both an email and a password.';return}
+ S.loginErr='';S.loginBusy=true;render();
+ await sbReady;
+ if(!sb){S.loginBusy=false;S.loginErr='Backend client failed to load.';return}
+ const {data,error}=await sb.auth.signInWithPassword({email,password:pw});
+ if(error){S.loginBusy=false;S.loginErr='Sign-in failed: '+error.message;return}
+ const uid=data.user&&data.user.id;
+ const {data:au,error:aerr}=await sb.schema('app').from('app_user').select('role_key,portal,display_name').eq('user_id',uid).maybeSingle();
+ if(aerr||!au){S.loginBusy=false;S.loginErr='Signed in, but no app_user profile was found for this account.';return}
+ let pers=null;
+ if(au.portal==='payer'){
+  if(email.startsWith('payer-a-rep'))pers=PERS.find(p=>p.id==='py-a');
+  else if(email.startsWith('payer-b-rep'))pers=PERS.find(p=>p.id==='py-b');
+  else if(email.startsWith('payer-c-rep'))pers=PERS.find(p=>p.id==='py-c');
+ }
+ if(!pers)pers=PERS.find(p=>p.key===au.role_key&&p.g!=='Payer')||PERS.find(p=>p.key===au.role_key);
+ S.loginBusy=false;
+ if(!pers){S.loginErr='Signed in as '+(au.display_name||au.role_key)+', but this role has no matching view in the prototype yet.';return}
+ S.persona=pers.id;S.picked=true;S.inboxAll=false;S.loginErr='';
+ if(pers.g==='Access'||pers.g==='Clinical'||pers.g==='Finance')S.rtab='provider';
+ if(IDS.includes(S.cur))await syncLive(S.cur);
+ toast('Signed in as '+pers.name+', '+pers.role+'.');
+ const h=(JOB[pers.id]&&JOB[pers.id][1])||'dashboard';
+ go(h);
+ return 'keep';
+};
+ACT.pick=async id=>{
+ if(id!=='tester'){toast('Use the sign-in form.');return 'keep'}
+ await doLogin('tester');
+ S.persona='tester';S.picked=true;S.inboxAll=false;S.loginErr='';
+ toast('You are the tester (all roles).');
+ if(IDS.includes(S.cur))await syncLive(S.cur);
+ go('dashboard');return 'keep';
+};
 const _nhm=navHtml;navHtml=function(a,s,n){return _nhm(a,s,n)+'<div class="navh">Other portals</div>'+['patient','payer','clearinghouse','platform'].map(k=>`<button class="nav" data-act="portal:${k}"><i></i>${PORT[k].name} portal</button>`).join('')};
 document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.mx)return;const [k,f]=t.dataset.mx.split(':');if(k==='cash'){MX.cash=MX.cash||{den:0,dly:0};MX[k][f]=Number(t.value)}else if(k==='age'){MX.riley=Number(t.value)}const y=window.scrollY;render();window.scrollTo(0,y)});
-/* ---- two-step sign-in (portal, then role) and refreshed landing ---- */
 const PINFO={provider:{who:'Everyone who works at a practice or hospital',does:'Scheduling, registration, documentation, coding, billing, denials, finance, privacy and administration',si:'Authenticator app'},
 patient:{who:'Patients, guarantors and caregivers',does:'Book, finish forms, see estimates, pay, dispute a bill and apply for assistance',si:'Password and text code'},
 payer:{who:'Health plans and their vendors',does:'Answer eligibility, decide authorizations, adjudicate claims, decide appeals, pay and audit',si:'Single sign-on and security key'},
@@ -1456,29 +1797,14 @@ clearinghouse:{who:'Intermediary operators and their engineers',does:'Connect pa
 platform:{who:'Meridian operators and customer administrators',does:'Identity, AI governance, audit trail, integrations and rules packs',si:'Hardware key'}};
 const pRoles=k=>PERS.filter(p=>p.key!=='*'&&portalOf(p)===k).length;
 const pFlows=k=>k==='provider'?SEC.reduce((a,s)=>a+s.tabs.length,0)+' tabs in '+SEC.length+' sections':(PNAV[k].length-1)+' workflows';
-ACT.start=()=>{S.rtab='';S.rq='';go('roles');return 'keep'};
-ACT.portalStart=k=>{S.rtab=k;S.rq='';go('roles');return 'keep'};
-const _rp2=rolesPage;
-rolesPage=function(){const tab=S.rtab;
- const top=`<div class="lnav"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle platform</small></div></div>${S.picked?btn('Back to the workspace','s2','data-go="'+(S.prevView||'dashboard')+'"'):''}</div>`;
- const steps=n=>`<ol class="ladder sm" style="margin:6px 0 18px;flex-direction:row;gap:18px"><li class="${n>1?'done':'now'}"><i></i>1. Portal${tab&&n>1?': '+PORT[tab].name:''}</li><li class="${n===2?'now':''}"><i></i>2. Role</li></ol>`;
- if(!tab)return `<div class="lp"><div class="wrap" style="padding-bottom:56px">${top}<h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Sign in to Meridian AI</h1><p class="sub" style="color:var(--fg2);max-width:44em;margin-bottom:6px">Step 1: choose the portal you work in. Step 2: choose your job role. Every portal shows only its own users and data.</p>${steps(1)}
- <div class="rgrid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">${Object.keys(PORT).map(k=>`<button class="rc" data-act="portalStart:${k}" style="min-height:190px"><b style="font-size:17px">${PORT[k].name} portal</b><span class="rcs">${PINFO[k].who}</span><span class="rcd">${PINFO[k].does}.</span><span class="rcm">${pRoles(k)} roles · ${pFlows(k)}<br>Sign-in: ${PINFO[k].si}</span></button>`).join('')}</div>
- <p class="sec" style="margin-top:20px">Not sure where to start? ${btn('Explore as the tester','s2 sm','data-act="pick:tester"')} <span class="muted">Opens the provider portal with every role unlocked.</span></p></div></div>`;
- const q=(S.rq||'').toLowerCase();
- const card1=p=>{const j=JOB[p.id],n=(['cfo','priv','adm'].includes(p.key)||portalOf(p)!=='provider')?PTASK(p.key).length:tasksFor().filter(t=>p.key==='*'||t.role===p.key).length;return `<button class="rc ${p.id===S.persona&&S.picked?'cur':''}" data-act="pick:${p.id}"><b>${p.id==='tester'?'Tester: all roles':p.role}</b>${p.id==='tester'?'<span class="rcs">Recommended for a first tour</span>':`<span class="rcs">${p.name}</span>`}<span class="rcd">${p.id==='tester'?'Do everything in this portal. Switch freely and walk any case from start to finish.':j[0]}</span><span class="rcm">${p.lim?'Approval limit '+$m(p.lim)+' · ':''}${p.id==='tester'?'All actions':n+' open task'+(n===1?'':'s')}</span></button>`};
- const grp=tab==='provider'?PGRP:[['Try everything',['tester']],...PGRP2[tab]];
- const groups=grp.map(([g,ids])=>{const ps=ids.map(i=>PERS.find(x=>x.id===i)).filter(p=>!q||(p.role+' '+p.name+' '+(p.id==='tester'?'tester':JOB[p.id][0])).toLowerCase().includes(q));return ps.length?`<section class="rg"><h2>${g}</h2><div class="rgrid">${ps.map(card1).join('')}</div></section>`:''}).join('');
- return `<div class="lp"><div class="wrap" style="padding-bottom:56px">${top}<h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Who are you in the ${PORT[tab].name.toLowerCase()} portal?</h1><p class="sub" style="color:var(--fg2);max-width:44em;margin-bottom:6px">${PINFO[tab].who}. Pick your job role. You will see that role’s tasks first, and the app only lets you do what that role is allowed to do.</p>${steps(2)}
- <div class="acts" style="margin-bottom:16px">${btn('← Change portal','s2 sm','data-act="rtab:"')}<input class="in" id="rq" placeholder="Search roles, for example appeals or registrar" value="${S.rq||''}" style="flex:1;min-width:220px;max-width:420px" aria-label="Search roles"></div>${groups||'<p class="muted">No role matches.</p>'}</div></div>`};
 landing=function(){const nR=PERS.filter(p=>p.key!=='*').length,nF=Object.keys(PNAV).reduce((a,k)=>a+PNAV[k].length-1,0);
  return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="#06201C" stroke-width="2" stroke-linecap="round"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle platform for physician groups and hospitals</small></div></div>
-<nav><a data-act="scroll:how">Five portals</a><a data-act="scroll:loops">Three loops</a><a data-act="scroll:out">Denial outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Sign in to the prototype','p','data-act="start"')}</nav></div>
+<nav><a data-act="scroll:how">Five portals</a><a data-act="scroll:loops">Three loops</a><a data-act="scroll:out">Denial outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Sign in to the prototype','p','data-go="login"')}</nav></div>
 <section class="hero"><div><span class="eyebrow">Access · clinical revenue · billing and recovery</span><h1>One record from the first call to the final payment.</h1><p class="lead">Meridian AI joins scheduling, registration, documentation, coding, billing, denials and finance on one record. Patients, providers, payers, clearinghouses and platform operators each sign in to their own portal, and every handover between them is checked before work moves on.</p>
-<div class="cta">${btn('Sign in: choose a portal','p lg','data-act="start"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
+<div class="cta">${btn('Sign in: choose a portal','p lg','data-go="login"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
 <div class="diagram">${diagram()}<div class="cap"><span>CLM-23988 · line 2 · CPT 72158 · $3,050</span><span>Same service line, four systems</span></div></div></section></div>
 <section class="band alt" id="how"><div class="wrap"><h2>Five portals, one record.</h2><p class="sub">Each person sees their own workflows. AI drafts and explains; a person approves every action that leaves the building.</p>
-<div class="rgrid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))">${Object.keys(PORT).map(k=>`<button class="rc" data-act="portalStart:${k}"><b>${PORT[k].name} portal</b><span class="rcs">${PINFO[k].who}</span><span class="rcd">${PINFO[k].does}.</span><span class="rcm">${pRoles(k)} roles · ${pFlows(k)}</span></button>`).join('')}</div></div></section>
+<div class="rgrid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))">${Object.keys(PORT).map(k=>`<button class="rc" data-go="login"><b>${PORT[k].name} portal</b><span class="rcs">${PINFO[k].who}</span><span class="rcd">${PINFO[k].does}.</span><span class="rcm">${pRoles(k)} roles · ${pFlows(k)}</span></button>`).join('')}</div></div></section>
 <section class="band" id="loops"><div class="wrap"><h2>Three loops, with a prevention path back to the front.</h2><p class="sub">Work moves between loops only when a handover check passes. Every denial gets a root cause that updates a front-end rule.</p>
 <div class="three"><div class="fact"><h3>1. Access</h3><p>Contact, schedule, register, verify coverage, authorize, estimate and clear before the patient arrives.</p><span class="mono">Scheduling · Registration and clearance</span></div><div class="fact"><h3>2. Clinical revenue</h3><p>Document once, capture charges, query, code and release a clean claim or hold it with a reason.</p><span class="mono">Documentation and coding · Charges and release</span></div><div class="fact"><h3>3. Billing, recovery and closure</h3><p>Submit, post, follow up, correct, appeal, collect from the patient, reconcile and close the case.</p><span class="mono">Denials · Claims and cash · Cases · Patient finance</span></div></div></div></section>
 <section class="band alt"><div class="wrap"><h2>Three people look at one claim and see three different things.</h2><p class="sub">Meridian puts their views on one history, so nobody re-keys a claim number to find out what happened to it.</p>
@@ -1491,7 +1817,7 @@ landing=function(){const nR=PERS.filter(p=>p.key!=='*').length,nF=Object.keys(PN
 <div class="grid k4">${kpi('Median analyst minutes per resolved case','38','n','','target 30')}${kpi('Filing deadlines missed','6','d','','of 318 eligible')}${kpi('Unsupported statements per reviewed draft','0.13','w','','14 in 112 drafts')}${kpi('Reconciled cash per eligible denied dollar','$0.31','s','','Q2-26 cohort')}</div>
 <div class="cta" style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">${btn('See the analytics','s2','data-go="analytics"')}${btn('Browse 15 process workflows','s2','data-go="flows"')}</div></div></section>
 <section class="band" id="scope"><div class="wrap"><h2>What this prototype covers.</h2><div class="scope" style="margin-top:20px"><div><h3>In the prototype</h3><ul><li>${nR} job roles across five portals, with permissions, approval limits and separation of duties</li><li>Provider portal: ${SEC.length} sections and ${SEC.reduce((a,s)=>a+s.tabs.length,0)} tabs, from first call to a closed case, plus leadership, privacy and administration</li><li>Patient, payer, clearinghouse and platform portals: ${nF} workflows with real gates (estimates, authorizations, edits, audit, AI switches)</li><li>Fifteen synthetic cases that run the full loop and link across all five portals: corrected claims, evidence requests, appeals, coverage changes, a patient who becomes self-pay and a payer takeback that reopens a case</li><li>A shared audit trail whose entries are chained so edits can be detected</li></ul></div><div><h3>Left to implementation</h3><ul><li>Payer-specific filing rules and real timelines</li><li>Production integrations with the EHR, clearinghouse, payers and bank, and the voice agent</li><li>Role permissions, approval limits and rule values (the ones shown are examples)</li><li>Interaction polish and transitions</li></ul></div></div></div></section>
-<div class="wrap"><div class="foot">Meridian AI is a working name and open to change. This is a clickable prototype with synthetic data. ${btn('Sign in to the prototype','p sm','data-act="start"')}</div></div></div>`};
+<div class="wrap"><div class="foot">Meridian AI is a working name and open to change. This is a clickable prototype with synthetic data. ${btn('Sign in to the prototype','p sm','data-go="login"')}</div></div></div>`};
 /* ====== v7: ten more cases, linked across all five portals ====== */
 const factsOf=id=>(CL[id]&&CL[id].facts)||FACTS;
 function detOf(p){const h='835 received: '+p.carc+(p.rarc&&p.rarc!=='N/A'?' / '+p.rarc:''),pd=$m(p.paid),n=p.id.slice(-3);
@@ -1581,18 +1907,17 @@ const slug=t=>t.toLowerCase().replace(/ /g,'-');
 const TOK={landing:'landing',dashboard:'dashboard',inbox:'inbox',roles:'choose-role',flows:'workflows',users:'users',analytics:'analytics',settings:'app-settings'};
 const WS={Workqueues:wsWorkqueues,Submission:wsSubmission,Account:wsAccount,Claims:wsClaims,Remits:wsRemits,Report:wsReport,Appeals:wsAppeals,Coverage:wsCoverage,Approvals:wsApprovals,Triage:wsTriage,'Corrected claim':wsCorrected,'Evidence packet':wsEvidence,'Appeal builder':wsAppealB,'AR follow-up':wsAR,Deposits:wsDeposits,Ledger:wsLedger,Closure:wsClosure,Timeline:wsTimeline,Underpayments:wsUP,Audits:wsAudits,Disputes:wsDisputes};
 function render(){const v=S.view;let h;
- if(v==='landing')h=landing();else if(v==='dashboard')h=dashboard();else if(v==='inbox')h=inbox();else if(v==='roles')h=rolesPage();else if(v.startsWith('ws:'))h=WS[v.slice(3)]();else if(v.startsWith('ac:'))h=ACW[v.slice(3)]();else if(v.startsWith('cl:'))h=CLW[v.slice(3)]();else if(v.startsWith('pf:'))h=PFW[v.slice(3)]();else if(v.startsWith('ad:'))h=ADW[v.slice(3)]();else if(v.startsWith('pt:'))h=PTW[v.slice(3)]();else if(v.startsWith('py:'))h=PYW[v.slice(3)]();else if(v.startsWith('ch:'))h=CHW[v.slice(3)]();else if(v.startsWith('pl:'))h=PLW[v.slice(3)]();
+ if(v==='landing')h=landing();else if(v==='login')h=loginPage();else if(v==='dashboard')h=dashboard();else if(v==='inbox')h=inbox();else if(v==='roles')h=rolesPage();else if(v.startsWith('ws:'))h=WS[v.slice(3)]();else if(v.startsWith('ac:'))h=ACW[v.slice(3)]();else if(v.startsWith('cl:'))h=CLW[v.slice(3)]();else if(v.startsWith('pf:'))h=PFW[v.slice(3)]();else if(v.startsWith('ad:'))h=ADW[v.slice(3)]();else if(v.startsWith('pt:'))h=PTW[v.slice(3)]();else if(v.startsWith('py:'))h=PYW[v.slice(3)]();else if(v.startsWith('ch:'))h=CHW[v.slice(3)]();else if(v.startsWith('pl:'))h=PLW[v.slice(3)]();
  else if(v==='flows')h=flows();else if(v==='users')h=users();else if(v==='analytics')h=analytics();else h=settings();
  $('#app').innerHTML=h}
 function go(v,top){S.view=v;render();if(top!==false)window.scrollTo(0,0);try{const t=/^(ws|ac|cl|pf|ad|pt|py|ch|pl):/.test(v)?v.slice(0,2)+'-'+slug(v.slice(3)):TOK[v];if(t)history.replaceState(null,'','#'+t)}catch(e){}}
-document.addEventListener('click',e=>{const el=e.target.closest('[data-go],[data-act]');if(!el)return;
- if(el.dataset.go){const g=el.dataset.go;if(g.startsWith('case:')){const id=g.slice(5);S.cur=id;go('ws:'+(tabFor(id)||'Timeline'))}else go(g);return}
- const [k,...r]=el.dataset.act.split(':');const f=ACT[k];if(!f)return;const keep=f(r.join(':'));if(keep==='keep')return;if(S.view.startsWith('ws:')||S.view==='inbox'||true){const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.addEventListener('change',e=>{const t=e.target;
+document.addEventListener('click',async e=>{const el=e.target.closest('[data-go],[data-act]');if(!el)return;
+ if(el.dataset.go){const g=el.dataset.go;if(g.startsWith('case:')){const id=g.slice(5);S.cur=id;await syncLive(id);go('ws:'+(tabFor(id)||'Timeline'))}else go(g);return}
+ const [k,...r]=el.dataset.act.split(':');const f=ACT[k];if(!f)return;const keep=await f(r.join(':'));if(keep==='keep')return;if(S.view.startsWith('ws:')||S.view==='inbox'||true){const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.addEventListener('change',async e=>{const t=e.target;
  if(t.id==='role'){S.role=t.value;const y=window.scrollY;render();window.scrollTo(0,y);return}
- if(t.id==='persona'){ACT.persona(t.value);const y=window.scrollY;render();window.scrollTo(0,y);return}
  if(t.dataset&&t.dataset.in==='lat'){V(S.vc).lat=t.value;lg(S.vc,'Documented laterality: '+(t.value||'blank'),1);const y=window.scrollY;render();window.scrollTo(0,y);return}if(t.dataset&&t.dataset.in){const key=S.cur+':'+t.dataset.in;S.ev[key]=t.value.trim();lg(S.cur,'Edited '+(t.dataset.in==='npi'?'rendering NPI':'prior authorization number')+': '+(t.value.trim()||'blank'),1);const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.addEventListener('keydown',e=>{if(e.target.id==='q'&&e.key==='Enter'){const v=e.target.value.trim().toUpperCase();const id=IDS.find(i=>i===v||i.endsWith(v));if(id){S.cur=id;go('ws:Account')}else toast('No claim matches “'+e.target.value+'”. Try CLM-24033.')}if(e.key==='Escape')$('#modal').hidden=true});
+document.addEventListener('keydown',async e=>{if((e.target.id==='login-email'||e.target.id==='login-pw')&&e.key==='Enter'){await ACT.login('go');render();return}if(e.target.id==='q'&&e.key==='Enter'){const v=e.target.value.trim().toUpperCase();const id=IDS.find(i=>i===v||i.endsWith(v));if(id){S.cur=id;await syncLive(id);go('ws:Account')}else toast('No claim matches “'+e.target.value+'”. Try CLM-24033.')}if(e.key==='Escape')$('#modal').hidden=true});
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')$('#modal').hidden=true});
-(function(){let t=(location.hash||'').slice(1);const m={landing:'landing',dashboard:'dashboard',inbox:'inbox','choose-role':'roles',workflows:'flows',users:'users',analytics:'analytics','app-settings':'settings'};let v='landing';if(m[t])v=m[t];else if(/^(ws|ac|cl|pf|ad|pt|py|ch|pl)-/.test(t)){const L={ws:TABS,ac:ACV,cl:CLV,pf:PFV,ad:Object.keys(ADW),pt:PNAV.patient,py:PNAV.payer,ch:PNAV.clearinghouse,pl:PNAV.platform}[t.slice(0,2)];const n=L.find(x=>slug(x)===t.slice(3));if(n)v=t.slice(0,2)+':'+n}S.view=v;render()})();
+(function(){let t=(location.hash||'').slice(1);const m={landing:'landing',dashboard:'dashboard',inbox:'inbox','choose-role':'login',login:'login',workflows:'flows',users:'users',analytics:'analytics','app-settings':'settings'};let v='landing';if(m[t])v=m[t];else if(/^(ws|ac|cl|pf|ad|pt|py|ch|pl)-/.test(t)){const L={ws:TABS,ac:ACV,cl:CLV,pf:PFV,ad:Object.keys(ADW),pt:PNAV.patient,py:PNAV.payer,ch:PNAV.clearinghouse,pl:PNAV.platform}[t.slice(0,2)];const n=L.find(x=>slug(x)===t.slice(3));if(n)v=t.slice(0,2)+':'+n}S.view=v;render()})();
 </script>
