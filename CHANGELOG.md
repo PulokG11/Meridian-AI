@@ -2,6 +2,12 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.2.0 - New brand mark everywhere
+- Replaced the old teal-tile-plus-sign mark with the new "True North Pulse" identity: a signal-blue tile, a simplified white pulse-line glyph (the same two-stroke-weight system as the full logo explored in the brand canvas), and a teal dot marking the one AI-touched beat
+- `.mark` background switched from `var(--ai)` to `var(--brand)`; the glyph (`svgMark`, defined once) is now the single source every page renders from — landing, sign-in, the Cases + Denials app shell, the role picker, and every other portal shell (patient/payer/clearinghouse/platform) all reference the same constant, so the mark is pixel-identical everywhere instead of landing() and roles() each carrying their own hand-copied plus-sign
+- Deliberately simplified from the full diamond-and-pulse mark for this 30px/16px UI size — the full mark (blue diamond frame, teal-dotted pulse) is reserved for larger contexts (marketing, docs, app icons 64px+); see the brand exploration canvas
+- Rollback: `git checkout v8.1.0 -- index.html`
+
 ## v8.1.0 - Real tester account, logout menu
 - New real backend account `tester@meridian.test` (same shared password, `mgr` permissions) replaces the old no-login "Explore as the tester" shortcut on the sign-in screen
 - Signing in as the tester restores the old two-step "choose a portal, then a role" picker (view `roles`) instead of landing directly on a dashboard; any other account still signs straight into its own role's dashboard, unchanged from v8.0.0

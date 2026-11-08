@@ -42,7 +42,7 @@ a{color:var(--brand)}
 .app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
 .side{background:var(--ink);color:var(--inv);padding:18px 12px 18px max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:3px;position:sticky;top:0;height:100vh;overflow-y:auto}
 .brandrow{display:flex;gap:10px;align-items:center;padding:2px 8px 18px;cursor:pointer}
-.mark{width:30px;height:30px;border-radius:8px;background:var(--ai);display:grid;place-items:center;flex:none}
+.mark{width:30px;height:30px;border-radius:8px;background:var(--brand);display:grid;place-items:center;flex:none}
 .brandrow b{display:block;font-size:15px;color:var(--inv)}.brandrow small{color:var(--inv2);font-size:11.5px}
 .nav{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;color:var(--inv2);font-weight:500;cursor:pointer;background:none;border:0;text-align:left;width:100%}
 .nav i{width:8px;height:8px;border-radius:3px;background:var(--inv2);opacity:.6;flex:none}
@@ -201,7 +201,7 @@ function diagram(){const lanes=['EHR','Claim','Payer','Finance'],W=560,H=320,x0=
  const mon=[['Mar',2,15],['Apr',3,1],['May',4,1],['Jun',5,1],['Jul',6,1],['Aug',7,1],['Sep',8,1]].map(m=>`<text x="${X(m[1],m[2])}" y="${H-8}" fill="#6F819A" font-size="10.5">${m[0]}</text>`).join('');
  let dots=pts.map((p,i)=>{const [x,y]=P[i],up=[1,0,0,1,1,0,0,0][i];const anchor=x>470?'end':x<130?'start':'middle';if(i===6)return `<circle cx="${x}" cy="${y}" r="5.5" fill="#2CC4B0" stroke="#0F1B2D" stroke-width="2"/><text x="${x-12}" y="${y+4}" text-anchor="end" fill="#F2F6FB" font-size="11" font-weight="600">Deposit <tspan fill="#7F93AD" font-weight="400">Sep 9</tspan></text>`;return `<circle cx="${x}" cy="${y}" r="5.5" fill="#2CC4B0" stroke="#0F1B2D" stroke-width="2"/><text x="${x}" y="${y+(up?-12:20)}" text-anchor="${anchor}" fill="#F2F6FB" font-size="11" font-weight="600">${p[3]}</text><text x="${x}" y="${y+(up?-24:32)}" text-anchor="${anchor}" fill="#7F93AD" font-size="10">${p[4]}</text>`}).join('');
  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="One claim traced across EHR, claim, payer and finance lanes">${g}${mon}<path d="${path}" fill="none" stroke="#2CC4B0" stroke-width="2" stroke-dasharray="1 0" opacity=".85"/>${dots}</svg>`}
-function landing(){return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="#06201C" stroke-width="2" stroke-linecap="round"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle workspace for a custom EHR</small></div></div>
+function landing(){return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8 L6 8 L7 4.5 L9.5 12 L11 8 L13 8" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="4.5" r="1.3" fill="#0E9F8E"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle workspace for a custom EHR</small></div></div>
 <nav><a data-act="scroll:how">How it works</a><a data-act="scroll:out">Three outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Open prototype','p','data-go="login"')}</nav></div>
 <section class="hero"><div><span class="eyebrow">Claim · denial · appeal · recovery</span><h1>One line from the encounter to the deposit.</h1><p class="lead">A meridian is a shared reference line. In Meridian AI the claim and its history are that line. The biller sees what was submitted, the appeals specialist sees what the payer disputed, and finance traces the payment back to the same service line.</p>
 <div class="cta">${btn('Open the prototype','p lg','data-go="login"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
@@ -417,7 +417,7 @@ function nextBox(id,tab){const s=stg(id),c=CL[id];
  return `<div class="next"><div><b>Next step for ${id}: ${a[0]}</b><span>${a[2]}${w&&w!==tab?' This happens in the '+w+' tab.':''}</span></div>${right}</div>`}
 /* ====== shell ====== */
 const NAV=[['Dashboard','dashboard'],['Inbox','inbox'],['Access','ac:Home'],['Clinical','cl:Encounter'],['Finance','pf:Patient accounts'],['Workspace','ws:Workqueues'],['Workflows','flows'],['Users','users'],['Analytics','analytics'],['Settings','settings']];
-const svgMark='<svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="#06201C" stroke-width="2" stroke-linecap="round"/></svg>';
+const svgMark='<svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8 L6 8 L7 4.5 L9.5 12 L11 8 L13 8" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="4.5" r="1.3" fill="#0E9F8E"/></svg>';
 function shell(active,title,sub,acts,body){const p=P();const ini=p.id==='tester'?'T':p.name.split(' ').map(x=>x[0]).join('').slice(0,2);const nT=tasksFor().filter(t=>p.key==='*'||t.role===p.key).length;
  return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>
 ${NAV.map(([n,g])=>`<button class="nav ${n===active?'on':''}" data-go="${g}"><i></i>${n}${n==='Inbox'&&nT?` <span class="bd i" style="margin-left:auto">${nT}</span>`:''}</button>`).join('')}<div class="grow"></div>
@@ -1740,7 +1740,7 @@ const PGRP2={patient:[['Patients and families',['pat','gua','slf']]],payer:[['El
 const PGRPTXT={provider:'Everyone who works at a practice or hospital',patient:'Patients, guarantors and caregivers',payer:'Health plans and their vendors',clearinghouse:'Intermediary operators',platform:'Meridian operators and customer admins'};
 function loginPage(){
  return `<div class="lp"><div class="wrap" style="max-width:420px;padding-top:72px;padding-bottom:72px">
- <div class="brandrow" style="padding:0 0 28px"><div class="mark"></div><div><b>Meridian AI</b><small>Sign in</small></div></div>
+ <div class="brandrow" style="padding:0 0 28px"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Sign in</small></div></div>
  <div class="card" style="gap:16px">
   <h3>Sign in to Meridian AI</h3>
   <label class="f">Email<input class="in" id="login-email" type="email" placeholder="denials@meridian.test" autocomplete="username" value="${S.loginEmail||''}"></label>
@@ -1820,7 +1820,7 @@ platform:{who:'Meridian operators and customer administrators',does:'Identity, A
 const pRoles=k=>PERS.filter(p=>p.key!=='*'&&portalOf(p)===k).length;
 const pFlows=k=>k==='provider'?SEC.reduce((a,s)=>a+s.tabs.length,0)+' tabs in '+SEC.length+' sections':(PNAV[k].length-1)+' workflows';
 landing=function(){const nR=PERS.filter(p=>p.key!=='*').length,nF=Object.keys(PNAV).reduce((a,k)=>a+PNAV[k].length-1,0);
- return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="#06201C" stroke-width="2" stroke-linecap="round"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle platform for physician groups and hospitals</small></div></div>
+ return `<div class="lp"><div class="wrap"><div class="lnav"><div class="brandrow" style="cursor:default"><div class="mark"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8 L6 8 L7 4.5 L9.5 12 L11 8 L13 8" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="4.5" r="1.3" fill="#0E9F8E"/></svg></div><div><b>Meridian AI</b><small>Revenue cycle platform for physician groups and hospitals</small></div></div>
 <nav><a data-act="scroll:how">Five portals</a><a data-act="scroll:loops">Three loops</a><a data-act="scroll:out">Denial outcomes</a><a data-act="scroll:scope">Scope</a>${btn('Sign in to the prototype','p','data-go="login"')}</nav></div>
 <section class="hero"><div><span class="eyebrow">Access · clinical revenue · billing and recovery</span><h1>One record from the first call to the final payment.</h1><p class="lead">Meridian AI joins scheduling, registration, documentation, coding, billing, denials and finance on one record. Patients, providers, payers, clearinghouses and platform operators each sign in to their own portal, and every handover between them is checked before work moves on.</p>
 <div class="cta">${btn('Sign in: choose a portal','p lg','data-go="login"')}${btn('Walk a denial through the loop','s2 lg','data-go="ws:Workqueues"')}</div><p class="muted" style="font-size:12.5px">All data is synthetic. Nothing here connects to a real EHR, payer or bank.</p></div>
