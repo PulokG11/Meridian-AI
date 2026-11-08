@@ -2,6 +2,12 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.1.0 - Real tester account, logout menu
+- New real backend account `tester@meridian.test` (same shared password, `mgr` permissions) replaces the old no-login "Explore as the tester" shortcut on the sign-in screen
+- Signing in as the tester restores the old two-step "choose a portal, then a role" picker (view `roles`) instead of landing directly on a dashboard; any other account still signs straight into its own role's dashboard, unchanged from v8.0.0
+- Top-right "Signed in as ..." control (both the Cases + Denials shell and the patient/payer/clearinghouse/platform portal shell) is now a dropdown with a single "Logout" action, instead of navigating straight back to the sign-in screen on click; Logout calls `sb.auth.signOut()` and returns to the sign-in screen
+- Rollback: `git checkout v8.0.0 -- index.html` (keeps the tester backend account, which is harmless if unused)
+
 ## v8.0.0 - Real backend wiring for Cases + Denials, real sign-in
 - index.html's Cases + Denials loop (20 ACT.* functions, the hardcoded demo claims) is wired to the real Supabase backend from v7.1.0: real Postgres auth, real RLS-enforced permissions, the 15 real seeded cases instead of client-side simulation
 - New sign-in screen: a real Email / Password / Login form (Supabase Auth) replaces the old no-credential "choose a portal, then a role" picker; signing in looks up the account's role in `app.app_user` and routes straight to that role's dashboard. "Explore as the tester" still works with no sign-in

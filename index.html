@@ -1296,10 +1296,13 @@ function navHtml(active,sid,nT){const b=(n,g,on,x)=>`<button class="nav ${on?'on
  let h=b('Dashboard','dashboard',!sid&&active==='Dashboard')+b('Inbox','inbox',!sid&&active==='Inbox',nT?` <span class="bd i" style="margin-left:auto">${nT}</span>`:''),last='';
  SEC.forEach(s=>{if(s.loop!==last){h+=`<div class="navh">${s.loop}</div>`;last=s.loop}h+=b(s.label,s.tabs[0][0]+':'+s.tabs[0][1],sid&&sid.id===s.id)});
  return h+`<div class="navh">More</div>`+NAVBOT.map(([n,g])=>b(n,g,!sid&&n===active)).join('')}
+function userMenu(){return S.userMenuOpen?`<div style="position:absolute;top:100%;right:0;margin-top:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.18);min-width:140px;z-index:20;padding:6px;display:flex;flex-direction:column"><button class="nav" style="color:var(--bad)" data-act="logout">Logout</button></div>`:''}
+ACT.menu=()=>{S.userMenuOpen=!S.userMenuOpen};
+ACT.logout=async()=>{await sbReady;if(sb){try{await sb.auth.signOut()}catch(e){}}S.userMenuOpen=false;S.picked=false;S.persona='tester';toast('Signed out.');go('login');return 'keep'};
 shell=function(active,title,sub,acts,body){const p=P();const ini=p.id==='tester'?'T':p.name.split(' ').map(x=>x[0]).join('').slice(0,2);const nT=tasksFor().filter(t=>p.key==='*'||t.role===p.key).length,sid=secOf(S.view);
  return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle workspace</small></div></div>${navHtml(active,sid,nT)}<div class="grow"></div>
-<div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="login" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
-<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><button class="pill rolechip" data-go="login" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
+<div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><div style="position:relative"><button class="me mebtn" data-act="menu" aria-label="Account menu" aria-haspopup="true"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · menu</small></div></button>${userMenu()}</div></aside>
+<div class="main"><header class="top"><div class="search"><input id="q" placeholder="Search a claim id, e.g. CLM-24033" aria-label="Search claims"></div><span style="flex:1"></span><div style="position:relative"><button class="pill rolechip" data-act="menu" aria-label="Account menu" aria-haspopup="true"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${userMenu()}</div>${bd('w','Synthetic data')}${btn('Ask Meridian AI','s2 sm','data-act="ask"')}</header>
 <main class="content"><div class="ph"><div><h1>${title}</h1><p>${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div></div>`};
 wsShell=function(tab,sub,acts,body,noCase){const v='ws:'+tab,s=secOf(v);const bar=noCase?'':`<div class="casebar"><span class="lbl">Case</span>${IDS.map(i=>`<button class="chip ${i===S.cur?'on':''}" data-act="cur:${i}"><span class="mono">${i}</span>${S.closed[i]?bd('s','closed'):stg(i)>=8?bd('s','reconciled'):bd(TONE[PATH[CL[i].path][0]],PATH[CL[i].path][1])}</button>`).join('')}</div>`;return shell('',s.label,tab+': '+sub,acts,secTabs(v)+bar+body)};
 grpShell=function(grp,tab,sub,acts,body,noV){const v=grp+':'+tab,s=secOf(v);return shell('',s.label,tab+': '+sub,acts,secTabs(v)+(noV||grp==='pf'?'':vbar())+body)};
@@ -1386,8 +1389,8 @@ function pshell(port,tab,sub,acts,body){const p=P(),pf=PPFX[port],ini=p.id==='te
  const nav=PNAV[port].map(n=>`<button class="nav ${n===tab?'on':''}" data-go="${pf}:${n}"><i></i>${n}${WFID[n]?` <span class="mono" style="margin-left:auto;font-size:10px;opacity:.65">${WFID[n]}</span>`:''}</button>`).join('');
  const others=Object.keys(PORT).filter(k=>k!==port).map(k=>`<button class="nav" data-act="portal:${k}"><i></i>${PORT[k].name} portal</button>`).join('');
  const pu=port==='patient'&&p.key==='*'?`<span class="pill">Viewing as ${PTN[MX.ptu]}</span>`:'';
- return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>${PORT[port].name} portal</small></div></div>${nav}<div class="navh">Other portals</div>${others}<div class="grow"></div><div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><button class="me mebtn" data-go="login" aria-label="Switch role"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · switch</small></div></button></aside>
-<div class="main"><header class="top"><span class="pill">${PORT[port].name} portal</span>${pu}<span style="flex:1"></span><button class="pill rolechip" data-go="login" aria-label="Switch role"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${bd('w','Synthetic data')}</header>
+ return `<div class="app"><aside class="side"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>${PORT[port].name} portal</small></div></div>${nav}<div class="navh">Other portals</div>${others}<div class="grow"></div><div class="aibox"><b>AI assist is ${S.set.ai?'on':'off'}</b>Drafts need human review before any filing.</div><div style="position:relative"><button class="me mebtn" data-act="menu" aria-label="Account menu" aria-haspopup="true"><div class="av">${ini}</div><div style="text-align:left"><b>${p.name}</b><small>${p.role} · menu</small></div></button>${userMenu()}</div></aside>
+<div class="main"><header class="top"><span class="pill">${PORT[port].name} portal</span>${pu}<span style="flex:1"></span><div style="position:relative"><button class="pill rolechip" data-act="menu" aria-label="Account menu" aria-haspopup="true"><span class="av" style="width:22px;height:22px;font-size:10px">${ini}</span>${p.id==='tester'?'Tester: all roles':p.role}<span aria-hidden="true">▾</span></button>${userMenu()}</div>${bd('w','Synthetic data')}</header>
 <main class="content"><div class="ph"><div><h1>${tab==='Home'?PORT[port].name+' portal':tab}</h1><p>${WFID[tab]?WFID[tab]+' · ':''}${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div></div>`}
 const gate=(port,body)=>{const p=P();if(p.key==='*'||portalOf(p)===port)return body;return `<div class="flat"><b>${PORT[port].name} portal</b><p class="sec" style="margin:6px 0 10px">You are signed in as ${p.role} (${PORT[portalOf(p)].name.toLowerCase()} portal). Each portal shows only its own users. Pick a role in this portal to continue.</p>${btn('Choose a '+PORT[port].name.toLowerCase()+' role','p','data-act="rtab:'+port+'"')}</div>`};
 const pgd=(port,tab,sub,acts,fn)=>pshell(port,tab,sub,acts,(P().key==='*'||portalOf(P())===port)?(typeof fn==='function'?fn():fn):gate(port));
@@ -1745,7 +1748,6 @@ function loginPage(){
   ${S.loginErr?`<p class="bad" style="font-size:12.5px">${S.loginErr}</p>`:''}
   <div class="acts">${btn(S.loginBusy?'Signing in…':'Login','p','data-act="login:go"',S.loginBusy)}${btn('Back','s2','data-go="landing"')}</div>
   <p class="muted" style="font-size:12px">Synthetic test accounts only. Ask the project owner for credentials.</p>
-  <p class="sec" style="font-size:12.5px">Not sure where to start? ${btn('Explore as the tester','s2 sm','data-act="pick:tester"')} <span class="muted">Opens the provider portal with every role unlocked (no sign-in).</span></p>
  </div>
  </div></div>`;
 }
@@ -1769,6 +1771,13 @@ ACT.login=async a=>{
   else if(email.startsWith('payer-b-rep'))pers=PERS.find(p=>p.id==='py-b');
   else if(email.startsWith('payer-c-rep'))pers=PERS.find(p=>p.id==='py-c');
  }
+ if(email==='tester@meridian.test'){
+  S.loginBusy=false;S.loginErr='';S.persona='tester';S.picked=false;S.rtab='';S.rq='';S.prevView='dashboard';
+  if(IDS.includes(S.cur))await syncLive(S.cur);
+  toast('Signed in as the tester. Choose a portal, then a role.');
+  go('roles');
+  return 'keep';
+ }
  if(!pers)pers=PERS.find(p=>p.key===au.role_key&&p.g!=='Payer')||PERS.find(p=>p.key===au.role_key);
  S.loginBusy=false;
  if(!pers){S.loginErr='Signed in as '+(au.display_name||au.role_key)+', but this role has no matching view in the prototype yet.';return}
@@ -1780,13 +1789,26 @@ ACT.login=async a=>{
  go(h);
  return 'keep';
 };
+ACT.portalStart=k=>{S.rtab=k;S.rq='';go('roles');return 'keep'};
+rolesPage=function(){const tab=S.rtab;
+ const top=`<div class="lnav"><div class="brandrow" data-go="landing"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Revenue cycle platform</small></div></div>${S.picked?btn('Back to the workspace','s2','data-go="'+(S.prevView||'dashboard')+'"'):''}</div>`;
+ const steps=n=>`<ol class="ladder sm" style="margin:6px 0 18px;flex-direction:row;gap:18px"><li class="${n>1?'done':'now'}"><i></i>1. Portal${tab&&n>1?': '+PORT[tab].name:''}</li><li class="${n===2?'now':''}"><i></i>2. Role</li></ol>`;
+ if(!tab)return `<div class="lp"><div class="wrap" style="padding-bottom:56px">${top}<h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Who are you today?</h1><p class="sub" style="color:var(--fg2);max-width:44em;margin-bottom:6px">Step 1: choose the portal you work in. Step 2: choose your job role. Every portal shows only its own users and data.</p>${steps(1)}
+ <div class="rgrid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">${Object.keys(PORT).map(k=>`<button class="rc" data-act="portalStart:${k}" style="min-height:190px"><b style="font-size:17px">${PORT[k].name} portal</b><span class="rcs">${PINFO[k].who}</span><span class="rcd">${PINFO[k].does}.</span><span class="rcm">${pRoles(k)} roles · ${pFlows(k)}<br>Sign-in: ${PINFO[k].si}</span></button>`).join('')}</div></div></div>`;
+ const q=(S.rq||'').toLowerCase();
+ const card1=p=>{const j=JOB[p.id]||['',''],n=(['cfo','priv','adm'].includes(p.key)||portalOf(p)!=='provider')?PTASK(p.key).length:tasksFor().filter(t=>p.key==='*'||t.role===p.key).length;return `<button class="rc ${p.id===S.persona&&S.picked?'cur':''}" data-act="pick:${p.id}"><b>${p.id==='tester'?'Tester: all roles':p.role}</b>${p.id==='tester'?'<span class="rcs">Recommended for a first tour</span>':`<span class="rcs">${p.name}</span>`}<span class="rcd">${p.id==='tester'?'Do everything in this portal. Switch freely and walk any case from start to finish.':j[0]}</span><span class="rcm">${p.lim?'Approval limit '+$m(p.lim)+' · ':''}${p.id==='tester'?'All actions':n+' open task'+(n===1?'':'s')}</span></button>`};
+ const grp=tab==='provider'?PGRP:[['Try everything',['tester']],...PGRP2[tab]];
+ const groups=grp.map(([g,ids])=>{const ps=ids.map(i=>PERS.find(x=>x.id===i)).filter(p=>p&&(!q||(p.role+' '+p.name+' '+(p.id==='tester'?'tester':(JOB[p.id]||[''])[0])).toLowerCase().includes(q)));return ps.length?`<section class="rg"><h2>${g}</h2><div class="rgrid">${ps.map(card1).join('')}</div></section>`:''}).join('');
+ return `<div class="lp"><div class="wrap" style="padding-bottom:56px">${top}<h1 style="font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:10px 0 8px">Who are you in the ${PORT[tab].name.toLowerCase()} portal?</h1><p class="sub" style="color:var(--fg2);max-width:44em;margin-bottom:6px">${PINFO[tab].who}. Pick your job role. You will see that role’s tasks first, and the app only lets you do what that role is allowed to do.</p>${steps(2)}
+ <div class="acts" style="margin-bottom:16px">${btn('← Change portal','s2 sm','data-act="rtab:"')}<input class="in" id="rq" placeholder="Search roles, for example appeals or registrar" value="${S.rq||''}" style="flex:1;min-width:220px;max-width:420px" aria-label="Search roles"></div>${groups||'<p class="muted">No role matches.</p>'}</div></div>`};
 ACT.pick=async id=>{
- if(id!=='tester'){toast('Use the sign-in form.');return 'keep'}
- await doLogin('tester');
- S.persona='tester';S.picked=true;S.inboxAll=false;S.loginErr='';
- toast('You are the tester (all roles).');
+ if(S.persona!=='tester'){toast('Use the sign-in form.');return 'keep'}
+ S.persona=id;S.picked=true;S.inboxAll=false;S.rq='';let h=(JOB[id]||['',''])[1]||'dashboard';
+ if(id==='tester'){const t=S.rtab||'provider';h=t==='provider'?'dashboard':PPFX[t]+':Home'}
+ else S.rtab=portalOf(PERS.find(x=>x.id===id)||{key:'*'});
+ toast('Exploring as '+(id==='tester'?'the tester (all roles)':PERS.find(x=>x.id===id).role+' · '+PERS.find(x=>x.id===id).name)+'.');
  if(IDS.includes(S.cur))await syncLive(S.cur);
- go('dashboard');return 'keep';
+ go(h);return 'keep';
 };
 const _nhm=navHtml;navHtml=function(a,s,n){return _nhm(a,s,n)+'<div class="navh">Other portals</div>'+['patient','payer','clearinghouse','platform'].map(k=>`<button class="nav" data-act="portal:${k}"><i></i>${PORT[k].name} portal</button>`).join('')};
 document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.mx)return;const [k,f]=t.dataset.mx.split(':');if(k==='cash'){MX.cash=MX.cash||{den:0,dly:0};MX[k][f]=Number(t.value)}else if(k==='age'){MX.riley=Number(t.value)}const y=window.scrollY;render();window.scrollTo(0,y)});
