@@ -1,0 +1,57 @@
+<style>
+#flow { overflow-x: auto; }
+.legend { margin-top: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.legend b { color: var(--text-primary); font-weight: 500; }
+</style>
+<h2 class="sr-only" style="position:absolute;left:-9999px">Flowchart of the 9 case stages (0 through 8) in Meridian AI and the commands that move a case from one stage to the next</h2>
+<div id="flow"></div>
+<div class="legend">
+  Stage is never stored &mdash; <code>api.case_stage(case_id)</code> derives it live from the claim/denial/appeal/records_request/remittance/deposit rows each time it's called.
+  Stage 8 (closed) can return to an earlier stage via <code>case.reopen</code> (a payer takeback/recoupment), which is why the diagram shows a reopen edge back into the loop rather than a dead end.
+</div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+const themeMode = document.documentElement.dataset.mode;
+const dark = themeMode ? themeMode === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"anthropic-sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"anthropic-sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#2b2a27' : '#f1efe8',
+    primaryBorderColor: dark ? '#9c9a92' : '#73726c',
+    primaryTextColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+
+const src = `flowchart TD
+  S0["Stage 0 - No denial linked<br/>claim exists, no denial yet"]
+  S1["Stage 1 - Triaged<br/>root cause + path confirmed"]
+  S2["Stage 2 - Drafting<br/>appeal / evidence / corrected claim"]
+  S3["Stage 3 - Approved internally<br/>appeal approved or claim ready"]
+  S4["Stage 4 - Filed / submitted<br/>sent to payer"]
+  S5["Stage 5 - Payer responded<br/>decision or remittance received"]
+  S6["Stage 6 - Payment posted"]
+  S7["Stage 7 - Deposit allocated<br/>cash applied to the line"]
+  S8["Stage 8 - Closed"]
+
+  S0 -->|"denial.triage"| S1
+  S1 -->|"denial.confirm_path"| S2
+  S2 -->|"appeal.draft / evidence.assemble / claim.create_replacement"| S3
+  S3 -->|"appeal.request_approval + approval.decide(approved)"| S4
+  S4 -->|"appeal.record_decision / records_request.decide / claim.release + submit"| S5
+  S5 -->|"remittance.receive + remittance.post"| S6
+  S6 -->|"deposit.allocate"| S7
+  S7 -->|"case.close"| S8
+  S8 -.->|"case.reopen (recoupment)"| S5
+`;
+
+const { svg } = await mermaid.render('flow-svg', src);
+document.getElementById('flow').innerHTML = svg;
+</script>
