@@ -2,6 +2,11 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.3.1 - Fix: invisible wordmark on the sign-in page
+- The sign-in page's "Meridian AI" title and "Sign in" subtitle used `.brandrow`'s default inverse (white) text color, meant for dark backgrounds like the sidebar and the dark hero — on the sign-in page's light background, the name was unreadable
+- New `.lp-brand` class scopes that one brandrow to the normal light-background text colors (`--fg` / `--fg3`); the sidebar, landing hero and role-picker brandrows are unaffected
+- Rollback: `git checkout v8.3.0 -- index.html`
+
 ## v8.3.0 - Reference documents added and reconciled with the live build
 - Added Meridian_TADD.docx (Technical Architecture & Design Document), a backend ER diagram, and a case-stage flow diagram, all grounded in the live Supabase schema and index.html
 - Added `_v2` companions for the PRD, Technical Specification and Platform Plan Parts 1 and 4: each requirement/workflow is now marked against the real backend (implemented, partially implemented, or client-side simulation only), verified against the actual `api.cmd_*` command functions rather than assumed

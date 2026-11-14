@@ -44,6 +44,7 @@ a{color:var(--brand)}
 .brandrow{display:flex;gap:10px;align-items:center;padding:2px 8px 18px;cursor:pointer}
 .mark{width:30px;height:30px;border-radius:8px;background:var(--brand);display:grid;place-items:center;flex:none}
 .brandrow b{display:block;font-size:15px;color:var(--inv)}.brandrow small{color:var(--inv2);font-size:11.5px}
+.lp-brand b{color:var(--fg)}.lp-brand small{color:var(--fg3)}
 .nav{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;color:var(--inv2);font-weight:500;cursor:pointer;background:none;border:0;text-align:left;width:100%}
 .nav i{width:8px;height:8px;border-radius:3px;background:var(--inv2);opacity:.6;flex:none}
 .nav:hover{background:var(--ink2);color:var(--inv)}.nav.on{background:var(--ink2);color:var(--inv)}.nav.on i{background:var(--ai);opacity:1}
@@ -1740,7 +1741,7 @@ const PGRP2={patient:[['Patients and families',['pat','gua','slf']]],payer:[['El
 const PGRPTXT={provider:'Everyone who works at a practice or hospital',patient:'Patients, guarantors and caregivers',payer:'Health plans and their vendors',clearinghouse:'Intermediary operators',platform:'Meridian operators and customer admins'};
 function loginPage(){
  return `<div class="lp"><div class="wrap" style="max-width:420px;padding-top:72px;padding-bottom:72px">
- <div class="brandrow" style="padding:0 0 28px"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Sign in</small></div></div>
+ <div class="brandrow lp-brand" style="padding:0 0 28px"><div class="mark">${svgMark}</div><div><b>Meridian AI</b><small>Sign in</small></div></div>
  <div class="card" style="gap:16px">
   <h3>Sign in to Meridian AI</h3>
   <label class="f">Email<input class="in" id="login-email" type="email" placeholder="denials@meridian.test" autocomplete="username" value="${S.loginEmail||''}"></label>
