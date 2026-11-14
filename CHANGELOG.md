@@ -2,6 +2,14 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.3.0 - Reference documents added and reconciled with the live build
+- Added Meridian_TADD.docx (Technical Architecture & Design Document), a backend ER diagram, and a case-stage flow diagram, all grounded in the live Supabase schema and index.html
+- Added `_v2` companions for the PRD, Technical Specification and Platform Plan Parts 1 and 4: each requirement/workflow is now marked against the real backend (implemented, partially implemented, or client-side simulation only), verified against the actual `api.cmd_*` command functions rather than assumed
+- PRD v2 adds a real journeys and user-stories section (Section 8) alongside the original target journeys
+- Platform Plan Part 2 (Data Model) and Part 3 (Test Cases) `_v2` spreadsheets gain a status column marking each of the 154 planned tables and 661 test cases against what actually exists and runs today
+- Originals are kept unchanged alongside each `_v2` file
+- Rollback: `git rm` the new and `_v2` files; nothing in index.html or process-maps.html changed in this release
+
 ## v8.2.0 - New brand mark everywhere
 - Replaced the old teal-tile-plus-sign mark with the new "True North Pulse" identity: a signal-blue tile, a simplified white pulse-line glyph (the same two-stroke-weight system as the full logo explored in the brand canvas), and a teal dot marking the one AI-touched beat
 - `.mark` background switched from `var(--ai)` to `var(--brand)`; the glyph (`svgMark`, defined once) is now the single source every page renders from — landing, sign-in, the Cases + Denials app shell, the role picker, and every other portal shell (patient/payer/clearinghouse/platform) all reference the same constant, so the mark is pixel-identical everywhere instead of landing() and roles() each carrying their own hand-copied plus-sign

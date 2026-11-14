@@ -1,0 +1,314 @@
+<style>
+#erd svg.erDiagram .divider path { stroke-opacity: 0.5; }
+#erd svg.erDiagram .row-rect-odd path,
+#erd svg.erDiagram .row-rect-odd rect,
+#erd svg.erDiagram .row-rect-even path,
+#erd svg.erDiagram .row-rect-even rect { stroke: none !important; }
+#erd { overflow-x: auto; }
+.legend { margin-top: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.legend b { color: var(--text-primary); font-weight: 500; }
+</style>
+<h2 class="sr-only" style="position:absolute;left:-9999px">Entity-relationship diagram of the Meridian AI Supabase backend, schema app, covering tenancy, patients, payers, claims, denials, appeals, remittances, deposits and cases</h2>
+<div id="erd"></div>
+<div class="legend">
+  All tables live in Postgres schema <b>app</b> (plus <b>ref</b> and <b>audit</b>), not <b>public</b> — that's why the Table Editor looked empty by default.
+  Every table below also carries a <code>tenant_id</code> FK to <b>app.tenant</b> (omitted here to keep the diagram readable).
+  Not shown: pure reference/infra tables &mdash; <code>ref.state_transition</code>, <code>ref.handover_def</code>, <code>audit.audit_log</code>, <code>audit.outbox_event</code>,
+  <code>app.idempotency_key</code>, <code>app.org_unit</code>, <code>app.permission</code>, <code>app.role_permission</code>, <code>app.user_role</code>,
+  <code>app.approval_limit</code>, <code>app.proxy_access</code>, <code>app.patient_relationship</code>, <code>app.handover_event</code>,
+  <code>app.clearinghouse</code>, <code>app.clearinghouse_connection</code>, <code>app.edi_interchange</code>, <code>app.claim_ack</code>,
+  <code>app.eligibility_request/response</code>, <code>app.rule_pack</code>, <code>app.rule</code>, <code>app.ai_model_version</code>, <code>app.ai_interaction</code>, <code>app.ai_review</code>.
+</div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+const themeMode = document.documentElement.dataset.mode;
+const dark = themeMode ? themeMode === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"anthropic-sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"anthropic-sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+
+const src = `erDiagram
+  TENANT ||--o{ APP_USER : employs
+  ROLE ||--o{ APP_USER : grants
+
+  TENANT ||--o{ PATIENT : registers
+  TENANT ||--o{ PROVIDER : operates
+  TENANT ||--o{ PAYER : contracts
+
+  PAYER ||--o{ PAYER_PLAN : offers
+  PATIENT ||--o{ COVERAGE : "covered by"
+  PAYER ||--o{ COVERAGE : insures
+  PAYER_PLAN ||--o{ COVERAGE : "plan of"
+
+  PATIENT ||--o{ CLAIM : "billed for"
+  PROVIDER ||--o{ CLAIM : submits
+  PAYER ||--o{ CLAIM : "adjudicated by"
+  COVERAGE ||--o{ CLAIM : "paid under"
+  CLAIM ||--o{ CLAIM : "corrected by"
+  CLAIM ||--o{ CLAIM_SERVICE_LINE : lines
+  CLAIM ||--o{ CLAIM_DIAGNOSIS : codes
+
+  CLAIM ||--o{ DENIAL : denies
+  CLAIM_SERVICE_LINE ||--o{ DENIAL : "at line"
+  DENIAL ||--|| DENIAL_TRIAGE : triaged
+  DENIAL ||--o{ APPEAL : "grounds for"
+  CLAIM ||--o{ APPEAL : "appeals claim"
+  APPEAL ||--o{ APPEAL : "parent appeal"
+  APPEAL ||--o{ APPEAL_STATEMENT : states
+  APPEAL ||--o{ APPEAL_CONTRIBUTOR : "co-authored by"
+  DENIAL ||--o{ RECORDS_REQUEST : triggers
+  CLAIM ||--o{ RECORDS_REQUEST : "for claim"
+  RECORDS_REQUEST ||--o{ EVIDENCE_ITEM : supplies
+  APPEAL ||--o{ EVIDENCE_ITEM : supports
+  DENIAL ||--o{ EVIDENCE_ITEM : supports
+  CLAIM ||--o{ EVIDENCE_ITEM : "about claim"
+
+  PAYER ||--o{ REMITTANCE : sends
+  REMITTANCE ||--o{ REMITTANCE_LINE : lines
+  CLAIM_SERVICE_LINE ||--o{ REMITTANCE_LINE : "paid on"
+  REMITTANCE_LINE ||--o{ PAYMENT_POSTING : posts
+  CLAIM_SERVICE_LINE ||--o{ PAYMENT_POSTING : "posted to"
+  PAYMENT_POSTING ||--o{ PAYMENT_POSTING : reverses
+  PAYER ||--o{ DEPOSIT : wires
+  DEPOSIT ||--o{ DEPOSIT_ALLOCATION : allocates
+  REMITTANCE ||--o{ DEPOSIT_ALLOCATION : "allocated from"
+  REMITTANCE_LINE ||--o{ DEPOSIT_ALLOCATION : "allocated to"
+  CLAIM_SERVICE_LINE ||--o{ DEPOSIT_ALLOCATION : "credited to"
+  DEPOSIT_ALLOCATION ||--o{ DEPOSIT_ALLOCATION : reverses
+
+  PATIENT ||--o{ CASE : "owns case"
+  CASE ||--o{ CASE_CLAIM : bundles
+  CLAIM ||--o{ CASE_CLAIM : "part of case"
+  CASE ||--o{ CASE_STATUS_HISTORY : transitions
+  CASE ||--o{ REOPEN_EVENT : reopened
+
+  CLAIM ||--o{ PATIENT_RESPONSIBILITY : "owes patient"
+  CLAIM_SERVICE_LINE ||--o{ PATIENT_RESPONSIBILITY : "at line"
+  PATIENT ||--o{ PATIENT_RESPONSIBILITY : owes
+  PATIENT ||--o{ PATIENT_STATEMENT : billed
+  PATIENT_STATEMENT ||--o{ PATIENT_PAYMENT : paid
+  PATIENT_RESPONSIBILITY ||--o{ PATIENT_PAYMENT : settles
+  PATIENT ||--o{ PATIENT_PAYMENT : pays
+  CASE ||--o{ PATIENT_DISPUTE : disputed
+  CLAIM ||--o{ PATIENT_DISPUTE : disputed
+  PATIENT_RESPONSIBILITY ||--o{ PATIENT_DISPUTE : disputed
+  PATIENT ||--o{ PATIENT_DISPUTE : files
+
+  APP_USER ||--o{ APPROVAL_REQUEST : requests
+  APP_USER ||--o{ APPROVAL_REQUEST : approves
+  APPROVAL_REQUEST ||--o| PATIENT_PAYMENT : authorizes
+  APPROVAL_REQUEST ||--o| PAYMENT_POSTING : authorizes
+
+  WORK_QUEUE ||--o{ TASK : holds
+  APP_USER ||--o{ TASK : assigned
+
+  TENANT {
+    uuid tenant_id PK
+  }
+  APP_USER {
+    uuid user_id PK
+    string role_key FK
+    string email
+  }
+  ROLE {
+    string role_key PK
+  }
+  PATIENT {
+    uuid patient_id PK
+  }
+  PROVIDER {
+    uuid provider_id PK
+  }
+  PAYER {
+    uuid payer_id PK
+  }
+  PAYER_PLAN {
+    uuid payer_plan_id PK
+    uuid payer_id FK
+  }
+  COVERAGE {
+    uuid coverage_id PK
+    uuid patient_id FK
+    uuid payer_id FK
+    uuid payer_plan_id FK
+  }
+  CLAIM {
+    uuid claim_id PK
+    uuid patient_id FK
+    uuid provider_id FK
+    uuid payer_id FK
+    uuid coverage_id FK
+    uuid original_claim_id FK
+    string status
+  }
+  CLAIM_SERVICE_LINE {
+    uuid claim_service_line_id PK
+    uuid claim_id FK
+  }
+  CLAIM_DIAGNOSIS {
+    uuid claim_id FK
+    string dx_code
+  }
+  DENIAL {
+    uuid denial_id PK
+    uuid claim_id FK
+    uuid line_id FK
+    uuid remittance_line_id FK
+    string root_cause FK
+  }
+  DENIAL_TRIAGE {
+    uuid denial_id PK
+    string root_cause FK
+    uuid confirmed_by FK
+  }
+  APPEAL {
+    uuid appeal_id PK
+    uuid claim_id FK
+    uuid denial_id FK
+    uuid parent_appeal_id FK
+    uuid author_id FK
+    uuid approver_id FK
+    uuid decided_by FK
+    uuid ai_interaction_id FK
+  }
+  APPEAL_STATEMENT {
+    uuid appeal_id FK
+    text statement
+  }
+  APPEAL_CONTRIBUTOR {
+    uuid appeal_id FK
+    uuid user_id FK
+  }
+  RECORDS_REQUEST {
+    uuid records_request_id PK
+    uuid claim_id FK
+    uuid denial_id FK
+    uuid decided_by FK
+    uuid responded_by FK
+  }
+  EVIDENCE_ITEM {
+    uuid claim_id FK
+    uuid denial_id FK
+    uuid appeal_id FK
+    uuid records_request_id FK
+  }
+  REMITTANCE {
+    uuid remittance_id PK
+    uuid payer_id FK
+    uuid edi_interchange_id FK
+  }
+  REMITTANCE_LINE {
+    uuid remittance_line_id PK
+    uuid remittance_id FK
+    uuid claim_id FK
+    uuid line_id FK
+  }
+  PAYMENT_POSTING {
+    uuid payment_posting_id PK
+    uuid remittance_line_id FK
+    uuid line_id FK
+    uuid reverses_posting_id FK
+    uuid approval_request_id FK
+  }
+  DEPOSIT {
+    uuid deposit_id PK
+    uuid payer_id FK
+  }
+  DEPOSIT_ALLOCATION {
+    uuid deposit_allocation_id PK
+    uuid deposit_id FK
+    uuid remittance_id FK
+    uuid remittance_line_id FK
+    uuid line_id FK
+    uuid reverses_allocation_id FK
+  }
+  CASE {
+    uuid case_id PK
+    uuid patient_id FK
+    string status
+  }
+  CASE_CLAIM {
+    uuid case_id FK
+    uuid claim_id FK
+  }
+  CASE_STATUS_HISTORY {
+    uuid case_id FK
+    string status
+  }
+  REOPEN_EVENT {
+    uuid case_id FK
+  }
+  PATIENT_RESPONSIBILITY {
+    uuid patient_responsibility_id PK
+    uuid patient_id FK
+    uuid claim_id FK
+    uuid line_id FK
+  }
+  PATIENT_STATEMENT {
+    uuid patient_statement_id PK
+    uuid patient_id FK
+  }
+  PATIENT_PAYMENT {
+    uuid patient_id FK
+    uuid patient_responsibility_id FK
+    uuid patient_statement_id FK
+    uuid approval_request_id FK
+  }
+  PATIENT_DISPUTE {
+    uuid case_id FK
+    uuid claim_id FK
+    uuid patient_responsibility_id FK
+    uuid patient_id FK
+  }
+  WORK_QUEUE {
+    uuid work_queue_id PK
+  }
+  TASK {
+    uuid task_id PK
+    uuid queue_id FK
+    uuid assignee_id FK
+  }
+  APPROVAL_REQUEST {
+    uuid approval_request_id PK
+    uuid requester_id FK
+    uuid approver_id FK
+  }
+`;
+
+const { svg } = await mermaid.render('erd-svg', src);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>

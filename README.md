@@ -6,7 +6,7 @@ A meridian is a shared reference line. Here the claim and its history are that l
 
 **All data is synthetic.** Nothing here connects to a real EHR, payer, clearinghouse or bank.
 
-**Current version: v7.0.0** (see [Version history](#version-history))
+**Current version: v8.2.0** (see [Version history](#version-history))
 
 ## Live links
 
@@ -19,7 +19,9 @@ Both sites redeploy automatically on every push to `main` (GitHub Actions, `.git
 
 ## What is in the prototype
 
-Sign-in is two steps: choose a portal, then choose a job role. There are 48 roles in all, plus a tester role that unlocks everything in a portal.
+**The Cases + Denials loop runs on a real backend.** Sign-in is real email/password (Supabase Auth); the 15 cases below, every role's permissions, and every action in that loop are enforced server-side by a Postgres database with row-level security and 27 callable command functions, not simulated in the browser. Signing in as the tester restores the old two-step "choose a portal, then a role" picker; every other account signs straight into its own role's dashboard. There are 48 real seeded accounts across 48 roles.
+
+The other four portals (patient, payer, clearinghouse, platform) and the Access/Clinical-revenue loops are still client-side simulation, with one exception: 3 seeded payer-rep accounts can record a real decision on an appeal or records request from the payer side.
 
 | Portal | Roles | What it covers |
 |---|---|---|
@@ -61,6 +63,18 @@ Fifteen synthetic cases run the whole loop and are linked across all five portal
 
 `process-maps.html` has swimlane maps for the whole platform: end to end, Access, Clinical revenue, Claim to cash, and Denial and recovery. It also lists the 24 handover checks and a matrix of which portal acts at each stage. Click any step for who does it, what happens and where it lives in the prototype.
 
+## Reference documents
+
+| Document | What it covers |
+|---|---|
+| [Meridian_TADD.docx](Meridian_TADD.docx) | Technical Architecture & Design Document — the as-built architecture, ADRs, data design, APIs, security and ops |
+| [Meridian_Product_Requirements_Document_v2.docx](Meridian_Product_Requirements_Document_v2.docx) | Full product requirements, with a real-build implementation status under every requirement and a real journeys/user-stories section |
+| [Meridian_Technical_Specification_v2.docx](Meridian_Technical_Specification_v2.docx) | Full reference architecture, annotated with what was actually built vs. the original prototype design |
+| [Meridian_Platform_Plan_Part1_Personas_Workflows_v2.docx](Meridian_Platform_Plan_Part1_Personas_Workflows_v2.docx), [Part4_Build_Plan_v2.docx](Meridian_Platform_Plan_Part4_Build_Plan_v2.docx) | Personas/workflows and the original build plan, annotated with real vs. simulated status |
+| [Meridian_Platform_Plan_Part2_DataModel_v2.xlsx](Meridian_Platform_Plan_Part2_DataModel_v2.xlsx), [Part3_TestCases_and_SyntheticData_v2.xlsx](Meridian_Platform_Plan_Part3_TestCases_and_SyntheticData_v2.xlsx) | The 154-table data model and 661 test cases, each row marked against the live schema and backend |
+
+The `_v2` files are annotated updates to the companion documents of the same name without that suffix (the originals are kept as-is for reference). An entity-relationship diagram of the live Supabase schema is published separately as a Claude artifact.
+
 ## Run it locally
 
 Open `index.html` or `process-maps.html` in a browser. Each is one self-contained file. Fonts load from Google Fonts, so an internet connection is needed for the intended typefaces.
@@ -71,6 +85,10 @@ Every release is a git tag. Details and rollback steps for each are in [CHANGELO
 
 | Tag | What changed |
 |---|---|
+| v8.2.0 | New brand mark ("True North Pulse") applied consistently across every page |
+| v8.1.0 | Real tester account (`tester@meridian.test`); logout menu |
+| v8.0.0 | Real backend wiring for Cases + Denials: real Postgres auth and RLS, real sign-in, Edge Function proxy, 17 of 20 actions calling real commands |
+| v7.1.0 | Backend: Supabase schema, RLS, 26 command functions, reference seed, the 15 real cases (retroactively tagged) |
 | v7.0.0 | Ten new cases (fifteen in all) linked across the provider, patient, payer, clearinghouse and platform portals |
 | v0.6.4 | README updated with live links and version history |
 | v0.6.3 | GitHub Pages deployment for the prototype and the process maps |
