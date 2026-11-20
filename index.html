@@ -172,7 +172,7 @@ const CL={
  det:['835 received: CO-50 / N115','Appeal recommended (90%)','Appeal drafted, 0 flags','Approved May 29','Appeal filed May 30, ref APL-4102','Overturned Aug 21: $5,490 allowed','835 posted Sep 4','Allocated to DEP-88213 Sep 9','Reconciled Sep 10; $610 variance adjusted']}
 };
 const IDS=Object.keys(CL);
-const PATH={appeal:['Warning','Appeal','Appeal builder'],corrected:['Success','Corrected claim','Corrected claim'],evidence:['AI','Request evidence','Evidence packet'],cob:['Info','Update coverage','Coverage']};
+const PATH={appeal:['Warning','Appeal','Appeal builder'],corrected:['Success','Corrected claim','Corrected claim'],evidence:['AI','Request evidence','Evidence packet'],cob:['Info','Update coverage','Coverage'],pending:['Neutral','Not yet denied','Submission']};
 const TONE={Warning:'w',Success:'s',AI:'a',Info:'i',Neutral:'n',Danger:'d'};
 const TABS=['Workqueues','Submission','Account','Claims','Remits','Report','Appeals','Coverage','Approvals','Triage','Corrected claim','Evidence packet','Appeal builder','AR follow-up','Deposits','Ledger','Closure','Timeline','Underpayments','Audits','Disputes'];
 const S={view:'landing',cur:'CLM-24017',st:{'CLM-24017':2,'CLM-24033':1,'CLM-24051':1,'CLM-24068':1,'CLM-23988':8},pend:{},flagOk:false,flagMode:'',role:'Supervisor',hist:[],wo:true,set:{ai:true,block:true,always:true,conf:80,auto:'Suggest only'},sel:'Denials',flow:7,setTab:'Integrations',uTab:'Users',invited:[]};
@@ -180,7 +180,7 @@ const S={view:'landing',cur:'CLM-24017',st:{'CLM-24017':2,'CLM-24033':1,'CLM-240
 const $=s=>document.querySelector(s);
 const $m=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
 const bd=(t,x)=>`<span class="bd ${TONE[t]||t}">${x}</span>`;
-const pbd=id=>{const p=PATH[CL[id].path];return bd(p[0],p[1])};
+const pbd=id=>{const path=CL[id].path;if(!path)return bd('n','Not yet denied');const p=PATH[path];return bd(p[0],p[1])};
 const mono=x=>`<span class="mono">${x}</span>`;
 const lk=(x,go)=>`<a class="lnk">${x}</a>`;
 const btn=(t,cls,attr,dis)=>`<button class="btn ${cls}" ${attr||''}${dis?' disabled':''}>${t}</button>`;
@@ -239,7 +239,7 @@ function dashboard(){
 function wsWorkqueues(){const c=CL[S.cur];const q=[['Edits',42],['Rejections',18],['Denials',96],['Coverage & COB',14],['Evidence requests',22],['Underpayments',11]];
  const extra=[['CLM-24102','Payer B','CO-16',bd('s','Corrected claim'),'91%','$740','Dec 3'],['CLM-24110','Payer A','CO-97',bd('n','Write-off review'),'77%','$215','Dec 9'],['CLM-24121','Payer C','CO-50',bd('w','Appeal'),'74%','$3,150','Dec 11'],['CLM-24127','Payer A','CO-18',bd('n','Close: duplicate'),'95%','$1,020','Dec 14']];
  const rows=[...IDS.filter(i=>stg(i)<8).sort((a,b)=>CL[a].days-CL[b].days).map(i=>({go:'case:'+i,hl:i===S.cur,c:[`<a class="lnk mono">${i}</a>`,CL[i].payer,mono(CL[i].carc),pbd(i),CL[i].conf+'%',$m(CL[i].billed),CL[i].due]})),...extra];
- return wsShell('Workqueues','Work the claim–denial–appeal–recovery loop by queue',btn('Assign selected','s2','data-act="assign"')+btn('Work next case','p','data-go="case:'+S.cur+'"'),
+ return wsShell('Workqueues','Work the claim–denial–appeal–recovery loop by queue',(can('newcase')?btn('+ New case','p','data-act="newcase"'):'')+btn('Assign selected','s2','data-act="assign"')+btn('Work next case','p','data-go="case:'+S.cur+'"'),
  `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${q.map(([n,v])=>`<button class="kpi" style="text-align:left;cursor:pointer;${n===S.sel?'border-color:var(--brand);background:var(--brandTint)':''}" data-act="queue:${n}"><span class="l">${n}</span><span class="v">${v}</span></button>`).join('')}</div>
  <div class="grid c21">${card(S.sel+' queue','Sorted by filing deadline. Bench cases appear first.',`<div style="display:flex;gap:8px;flex-wrap:wrap">${bd('i','All payers')}${bd('n','CO group')}${bd('n','PR group')}${bd('n','Mine only')}${bd('a','AI path set')}</div>`+tbl(['Claim','Payer','Denial','AI path','Conf.','rAmount','Due'],rows))}
  ${card('Selected: '+c.id,c.pt+' · '+c.payer,kv([['Billed',$m(c.billed)],['Denied',c.den+', 2026'],['Reason',mono(c.carc+' · '+c.rarc)],['Deadline',bd(c.days<=7?'d':'w',c.due+(c.days?' · '+c.days+' days':''))],['Stage',STAGES[stg(c.id)]]])+`<div class="aip"><h4>${bd('a','Meridian AI')} Recommended: ${PATH[c.path][1]} (${c.conf}%)</h4><ul>${c.why.map(w=>`<li>${w}</li>`).join('')}</ul></div>`+`<div style="display:flex;gap:8px;flex-wrap:wrap">${btn('Open '+PATH[c.path][2],'p','data-go="ws:'+PATH[c.path][2]+'"')}${btn('Open account','s2','data-go="ws:Account"')}</div>`)}</div>
@@ -349,7 +349,7 @@ const PERS=[
 {id:'sup',name:'Priya Raman',role:'Supervisor',key:'sup',lim:2500},
 {id:'mgr',name:'Marcus Bell',role:'RCM manager',key:'mgr',lim:10000},
 {id:'comp',name:'Helen Ortiz',role:'Compliance reviewer',key:'comp',lim:0}];
-const PERM={tri:['denials','appeals','billing','ar','sup','mgr'],draft:['denials','appeals','billing','sup','mgr'],send:['denials','appeals','billing','sup','mgr'],release:['billing','sup','mgr'],post:['cash','fin','sup','mgr'],alloc:['cash','fin','mgr'],recon:['fin','mgr'],close:['fin','mgr'],ar:['ar','sup','mgr'],pat:['billing','ar','fin','mgr'],ovr:['sup','mgr']};
+const PERM={tri:['denials','appeals','billing','ar','sup','mgr'],draft:['denials','appeals','billing','sup','mgr'],send:['denials','appeals','billing','sup','mgr'],release:['billing','sup','mgr'],post:['cash','fin','sup','mgr'],alloc:['cash','fin','mgr'],recon:['fin','mgr'],close:['fin','mgr'],ar:['ar','sup','mgr'],pat:['billing','ar','fin','mgr'],ovr:['sup','mgr'],newcase:['denials','appeals','billing','ar','sup','mgr']};
 const P=()=>PERS.find(p=>p.id===S.persona)||PERS[0];
 const can=a=>{const p=P();return p.key==='*'||!PERM[a]||PERM[a].includes(p.key)};
 const roleOf=k=>{const p=PERS.find(x=>x.key===k);return p?p.role:k==='sched'?'Scheduler':'Payer simulator'};
@@ -396,8 +396,11 @@ const breakRows=()=>openBreaks().map(d=>({go:'ws:Deposits',c:[mono(d),DEPS[d].pa
 function laneOf(id){const sc=triScores(id),th=[.98,.98,1,.35],fl=[.75,.75,.8,.35];if(sc.every((v,i)=>v>=th[i]-1e-9))return ['Touchless candidate','s'];if(sc.every((v,i)=>v>=fl[i]-1e-9))return ['Assisted lane','w'];return ['Expert lane','d']}
 function triScores(id){const t=TRI[id].sc.slice();if(CL[id].path==='evidence')t[2]=compl(id);return t}
 /* ====== path, tabs, next step ====== */
-function tabFor(id){const s=stg(id),p=PATH[CL[id].path][2];if(S.closed[id])return null;if(s===1)return S.tri[id]?p:'Triage';if(s===2)return S.pend[id]?'Approvals':p;if(s===3||s===4)return 'Submission';if(s===5)return 'Remits';if(s===6||s===7)return 'Deposits';return 'Closure'}
+function tabFor(id){const s=stg(id),p=PATH[CL[id].path][2];if(S.closed[id])return null;if(s===0)return 'Submission';if(s===1)return S.tri[id]?p:'Triage';if(s===2)return S.pend[id]?'Approvals':p;if(s===3||s===4)return 'Submission';if(s===5)return 'Remits';if(s===6||s===7)return 'Deposits';return 'Closure'}
 function nextAct(id){const s=stg(id),c=CL[id];const nm=({appeal:'appeal letter',corrected:'corrected claim',evidence:'evidence packet',cob:'coverage update'})[c.path];
+ if(s===0){const cs=(LIVE[id]||{}).claim_status;
+  if(cs==='submitted'||cs==='accepted')return ['Simulate payer response','simresp:'+id,'Enter what the 835 paid, adjusted or denied. A denied amount creates a real denial and moves this case to Triage.'];
+  return ['Release to payer','release:'+id,'Builds the transaction and submits it. Once submitted, simulate the payer\'s response.'];}
  if(s===1&&!S.tri[id])return ['Confirm the recommended path','tri:ok:'+id,'H17 needs an analyst to confirm or override the AI path before drafting.'];
  const m={1:['Draft with Meridian AI','draft:'+id,'AI compares the denial with the chart and prepares the '+nm+'.'],
  2:S.pend[id]?['Approve or return','','Waiting in Approvals. A reviewer within the limit must approve.']:['Send to approval','sendappr:'+id,'A person must approve before anything leaves the building.'],
@@ -406,7 +409,7 @@ function nextAct(id){const s=stg(id),c=CL[id];const nm=({appeal:'appeal letter',
  5:['Post 835 remittance','post:'+id,'Match the 835 lines to this claim’s service lines.'],
  6:['Allocate to deposit','alloc:'+id,'Tie the posted payment to its bank deposit.'],
  7:['Confirm reconciliation','recon:'+id,'Finance confirms deposit, remit and ledger agree.']};return m[s]}
-const NEEDS={tri:'tri',draft:'draft',sendappr:'send',release:'release',post:'post',alloc:'alloc',recon:'recon'};
+const NEEDS={tri:'tri',draft:'draft',sendappr:'send',release:'release',post:'post',alloc:'alloc',recon:'recon',simresp:'post'};
 function nextBox(id,tab){const s=stg(id),c=CL[id];
  if(S.closed[id])return `<div class="next done"><div><b>${id} is closed</b><span>Reason: ${S.closed[id].reason}. ${c.det[8]}.</span></div>${btn('Open timeline','s2','data-go="ws:Timeline"')}</div>`;
  if(s>=8){const bl=blockers(id);return `<div class="next ${bl.length?'':'done'}"><div><b>${id} is reconciled${bl.length?', not yet closable':''}</b><span>${bl.length?bl.join(' · '):'Every line is settled and cash is reconciled. Close the case.'}</span></div>${tab==='Closure'?'':btn('Open closure','p','data-go="ws:Closure"')}</div>`}
@@ -453,7 +456,7 @@ function inbox(){const p=P();const all=p.key==='*'||S.inboxAll;const T=tasksFor(
  return shell('Inbox','Task inbox','Work tasks for the person you are acting as, with the handover that created each one',p.key==='*'?'':btn(S.inboxAll?'Show only mine':'Show everyone’s','s2','data-act="inbox:all"'),
  `<div class="grid k4">${kpi('Open tasks',T.length,'n',all?'everyone':p.role)}${kpi('Due within 7 days',T.filter(t=>t.days<=7).length,'d','Work first')}${kpi('Held handovers',T.filter(t=>/held/.test(t.ho)).length,'w','Need a named owner')}${kpi('Waiting on others',T.filter(t=>t.role==='sys'||t.role==='sched').length,'i','Payer or scheduling')}</div>
  ${card('Tasks','Sorted by filing deadline. Tasks come from state changes and handovers, not from a fixed list.',rows.length?tbl(['Task','Case','Owner role','Handover','Due',''],rows):`<p class="muted">Nothing is waiting for ${p.role}. Choose “Show everyone’s” to see the rest.</p>`)}
- ${p.key==='*'?'':`<div class="flat"><b>${p.name} · ${p.role}</b><p class="sec" style="font-size:13px;margin-top:4px">Allowed here: ${Object.keys(PERM).filter(k=>PERM[k].includes(p.key)).map(k=>({tri:'confirm path',draft:'draft',send:'send to approval',release:'release',post:'post remits',alloc:'allocate deposits',recon:'reconcile',close:'close cases',ar:'AR follow-up',pat:'patient balances',ovr:'resolve overrides'})[k]).join(', ')||'view only'}${p.lim?'. Approval limit '+$m(p.lim)+' (example).':'. No approval authority.'}</p></div>`}`)}
+ ${p.key==='*'?'':`<div class="flat"><b>${p.name} · ${p.role}</b><p class="sec" style="font-size:13px;margin-top:4px">Allowed here: ${Object.keys(PERM).filter(k=>PERM[k].includes(p.key)).map(k=>({tri:'confirm path',draft:'draft',send:'send to approval',release:'release',post:'post remits',alloc:'allocate deposits',recon:'reconcile',close:'close cases',ar:'AR follow-up',pat:'patient balances',ovr:'resolve overrides',newcase:'create a new case'})[k]).join(', ')||'view only'}${p.lim?'. Approval limit '+$m(p.lim)+' (example).':'. No approval authority.'}</p></div>`}`)}
 /* ====== triage (PB10) ====== */
 function wsTriage(){const id=S.cur,c=CL[id],t=TRI[id],sc=triScores(id),ln=laneOf(id),ov=S.ovr[id];const th=[.98,.98,1,.35],fl=[.75,.75,.8,.35],nm=['C1 Classification','C2 Coverage order','C3 Evidence completeness','C4 Recovery likelihood'];
  const fmt=(v,i)=>i===2?Math.round(v*100)+'%':v.toFixed(2);const ft=(v,i)=>i===2?(v*100)+'%':v.toFixed(2);
@@ -715,6 +718,7 @@ async function syncLive(id){
   const {data:cur}=curClaimId?await sb.schema('app').from('claim').select('claim_id,original_claim_id,status').eq('claim_id',curClaimId).maybeSingle():{data:null};
   const origId=(cur&&cur.original_claim_id)||curClaimId;
   live.orig_claim_id=origId;
+  live.claim_status=cur&&cur.status;
   const {data:den}=origId?await sb.schema('app').from('denial').select('denial_id,status').eq('claim_id',origId).order('received_at',{ascending:false}).limit(1).maybeSingle():{data:null};
   live.denial_id=den&&den.denial_id;live.denial_status=den&&den.status;
   if(live.denial_id){
@@ -876,6 +880,7 @@ ACT.sim=async id=>{
 
 ACT.post=async id=>{
  if(!can('post'))return deny('post');
+ if(CL[id].synthetic)return ACT.simresp(id);
  const live=LIVE[id]||{};
  if(!live.lines||!live.lines.length){toast('No service lines on file to post against.');return 'keep'}
  const c=CL[id],k=CLS[id]||{};
@@ -902,7 +907,15 @@ ACT.alloc=async id=>{
  if(!can('alloc'))return deny('alloc');
  const live=LIVE[id]||{};
  if(!live.remittance_id){toast('No remittance posted yet for this case.');return 'keep'}
- if(!live.deposit_id){toast('No bank deposit is on file for this payer yet. Deposit intake is not modeled as a command in this release, so only cases seeded with a deposit can be allocated.');return 'keep'}
+ if(!live.deposit_id){
+  try{
+   const amt=Math.round((CL[id].paid||0)*100)/100;
+   if(!(amt>0)){toast('No posted payment to allocate yet.');return 'keep'}
+   const dep=await callCommand('deposit.create',{payer_id:live.payer_id,amount:amt});
+   live.deposit_id=dep.deposit_id;
+   toast('Deposit '+dep.bank_reference+' recorded for '+$m(amt)+'.');
+  }catch(e){return 'keep'}
+ }
  try{
   const {data:remLines}=await sb.schema('app').from('remittance_line').select('line_id,paid').eq('remittance_id',live.remittance_id);
   for(const rl of (remLines||[])){
@@ -912,6 +925,115 @@ ACT.alloc=async id=>{
  lg(id,'Allocated to deposit '+(CL[id].dep||live.deposit_id)+' (H20)',2);
  await syncLive(id);
  toast('Allocated to deposit.');
+};
+
+/* ====== simulate payer response (self-created cases: no scripted CL.paid/CLS.adj to post against) ====== */
+ACT.simresp=id=>{
+ if(!can('post'))return deny('post');
+ const live=LIVE[id]||{};
+ if(!live.work_claim_id||!live.lines||!live.lines.length){toast('No submitted claim on file for this case yet.');return 'keep'}
+ $('#modal').hidden=false;
+ $('#modal').innerHTML=`<div class="box" role="dialog" aria-label="Simulate payer response"><h3>Simulate payer response</h3>
+  <p class="sec" style="font-size:12.5px">Enter the 835 as the payer would send it for this one-line claim. A denied amount creates a real denial and moves the case straight to Triage.</p>
+  <label class="f">Paid<input id="sr-paid" class="in" placeholder="0.00" inputmode="decimal"></label>
+  <label class="f">Contractual adjustment<input id="sr-adj" class="in" placeholder="0.00" inputmode="decimal"></label>
+  <label class="f">Patient share<input id="sr-pt" class="in" placeholder="0.00" inputmode="decimal"></label>
+  <label class="f">Denied<input id="sr-den" class="in" placeholder="0.00" inputmode="decimal"></label>
+  <label class="f">Group code (if denied)<select id="sr-gc"><option value="CO">CO · Contractual obligation</option><option value="PR">PR · Patient responsibility</option><option value="OA">OA · Other adjustment</option><option value="PI">PI · Payer initiated</option><option value="CR">CR · Corrections and reversals</option></select></label>
+  <label class="f">CARC (required if denied)<input id="sr-carc" class="in" placeholder="e.g. 50"></label>
+  <label class="f">RARC (optional)<input id="sr-rarc" class="in" placeholder="e.g. N115"></label>
+  <label class="f">If denied, recommended path<select id="sr-path"><option value="corrected">Corrected claim</option><option value="appeal">Appeal</option><option value="evidence">Request evidence</option><option value="cob">Update coverage</option></select></label>
+  <div class="acts" style="justify-content:flex-end">${btn('Cancel','s2','data-act="close"')}${btn('Post remittance','p','data-act="dosimresp:'+id+'"')}</div></div>`;
+ return 'keep';
+};
+ACT.dosimresp=async id=>{
+ const live=LIVE[id]||{};
+ const num=sel=>{const e=$(sel);return e?Number(e.value||0)||0:0};
+ const paid=num('#sr-paid'),adj=num('#sr-adj'),pt=num('#sr-pt'),den=num('#sr-den');
+ if(paid+adj+pt+den<=0){toast('Enter at least one amount.');return 'keep'}
+ const carc=($('#sr-carc').value||'').trim();
+ if(den>0&&!carc){toast('Enter a CARC for the denied amount.');return 'keep'}
+ const line={claim_id:live.work_claim_id,line_id:live.lines[0].claim_service_line_id,paid,adjustment:adj,patient_share:pt,denied:den};
+ if(den>0){
+  line.group_code=$('#sr-gc').value;line.carc=carc;
+  const rarc=($('#sr-rarc').value||'').trim();if(rarc)line.rarc=rarc;
+ }
+ try{
+  const r=await callCommand('remittance.receive',{interchange_trace:'TRN-'+id+'-'+Date.now(),payer_id:live.payer_id,control_total:paid,lines:[line]});
+  await callCommand('remittance.post',{remittance_id:r.remittance_id});
+  if(den>0){
+   await syncLive(id);
+   const live2=LIVE[id]||{};
+   if(live2.denial_id){
+    const path=$('#sr-path').value;
+    await callCommand('denial.triage',{denial_id:live2.denial_id,root_cause:'GENERAL',recommended_path:PATH_CMD[path],confidence:0.75,ai_generated:true});
+    await callCommand('denial.confirm_path',{denial_id:live2.denial_id,path:PATH_CMD[path]});
+    CL[id].path=path;CL[id].carc=line.carc;CL[id].rarc=line.rarc||'N/A';
+    CL[id].reason='Denied per the simulated 835';CL[id].conf=75;
+    CL[id].why=['This is a self-created case; the payer response was entered manually in the Simulate payer response form.'];
+    TRI[id]=Object.assign(TRI[id]||{},{root:'GENERAL',sc:[1,1,1,1],alt:ALTS[path]||[],note:'Manually entered, not model-scored.'});
+   }
+  }
+ }catch(e){$('#modal').hidden=true;return 'keep'}
+ CL[id].paid=Math.round(((CL[id].paid||0)+paid)*100)/100;
+ $('#modal').hidden=true;
+ lg(id,'Simulated 835 posted (paid '+$m(paid)+(den?', denied '+$m(den):'')+')',3);
+ await syncLive(id);
+ toast(den>0?'835 posted. A real denial was created; triage confirmed the path automatically.':'835 posted to the service line.');
+};
+
+/* ====== + New case (real patient + claim + case, via api.cmd_case_create) ====== */
+ACT.newcase=async()=>{
+ if(!can('newcase'))return deny('newcase');
+ await sbReady;
+ let payers=[];
+ try{const {data}=await sb.schema('app').from('payer').select('payer_id,name').order('name');payers=data||[]}catch(e){}
+ if(!payers.length){toast('Could not load the payer list.');return 'keep'}
+ $('#modal').hidden=false;
+ $('#modal').innerHTML=`<div class="box" role="dialog" aria-label="New case"><h3>New case</h3>
+  <p class="sec" style="font-size:12.5px">Creates a real patient, claim and case against the live backend (api.cmd_case_create).</p>
+  <label class="f">Patient first name<input id="nc-fn" class="in" value="New"></label>
+  <label class="f">Patient last name<input id="nc-ln" class="in" value="Patient"></label>
+  <label class="f">Date of birth<input id="nc-dob" class="in" type="date" value="1985-06-15"></label>
+  <label class="f">Payer<select id="nc-payer">${payers.map(p=>`<option value="${p.payer_id}">${p.name}</option>`).join('')}</select></label>
+  <label class="f">Procedure code (CPT)<input id="nc-cpt" class="in" value="99213"></label>
+  <label class="f">Billed amount<input id="nc-billed" class="in" placeholder="0.00" value="250.00" inputmode="decimal"></label>
+  <label class="f">Diagnosis code (ICD-10, optional)<input id="nc-dx" class="in" placeholder="e.g. M25.561"></label>
+  <div class="acts" style="justify-content:flex-end">${btn('Cancel','s2','data-act="close"')}${btn('Create case','p','data-act="docreatecase"')}</div></div>`;
+ return 'keep';
+};
+ACT.docreatecase=async()=>{
+ const fn=($('#nc-fn').value||'').trim(),ln=($('#nc-ln').value||'').trim(),dob=$('#nc-dob').value;
+ const payerSel=$('#nc-payer'),payerId=payerSel&&payerSel.value,payerName=payerSel?payerSel.options[payerSel.selectedIndex].text:'';
+ const cpt=($('#nc-cpt').value||'').trim();
+ const billed=Number(($('#nc-billed').value||'').trim())||0;
+ const dx=($('#nc-dx').value||'').trim();
+ if(!fn||!ln||!dob||!payerId||!cpt||!(billed>0)){toast('Fill in the patient name, DOB, payer, procedure code and a billed amount greater than zero.');return 'keep'}
+ let r;
+ try{
+  const args={patient:{first_name:fn,last_name:ln,dob},payer_id:payerId,lines:[{procedure_code:cpt,billed}]};
+  if(dx)args.diagnoses=[{icd10_code:dx}];
+  r=await callCommand('case.create',args);
+ }catch(e){return 'keep'}
+ const newId=r.case_number;
+ CASE_ID[newId]=r.case_id;
+ CL[newId]={id:newId,pt:fn+' '+ln,payer:payerName,enc:'—',prov:'—',loc:'—',dos:'—',sent:'—',den:'—',carc:'—',rarc:'N/A',
+  reason:'Not yet denied — case just created',billed,paid:0,path:'pending',conf:0,due:'—',days:null,owner:(P().name||'You'),
+  dep:null,era:null,dx:dx?[dx]:[],lines:[[1,cpt,cpt,billed]],docs:[],
+  cov:[['Primary',payerName,'—','—','Active','Manual']],
+  why:['This case was created from the portal. No denial has occurred yet.'],
+  det:['Case created; claim in draft','Released to the payer','Submitted; acknowledgments pending','Awaiting payer response','Payer responded','Payment posted','Deposit allocated','Reconciled','Closed'],
+  synthetic:true};
+ CLS[newId]={adj:0,type:null,pt:0};
+ TRI[newId]={root:null,sc:[1,1,1,1],alt:[],note:'Not yet triaged.'};
+ S.st[newId]=0;S.tri[newId]=0;S.stm[newId]=[];
+ IDS.push(newId);
+ $('#modal').hidden=true;
+ S.cur=newId;
+ await syncLive(newId);
+ toast('Case '+newId+' created. Release it to the payer, then simulate the response.');
+ go('ws:Submission');
+ return 'keep';
 };
 
 ACT.recon=async id=>{

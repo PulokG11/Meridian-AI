@@ -2,6 +2,16 @@
 
 Each release is a git tag. To roll back: `git checkout v0.4.0 -- index.html` (then commit), or `git revert <commit>`.
 
+## v8.4.0 - Create cases from the portal (full loop, origination to close)
+- New backend commands `case.create` and `deposit.create` (migration `010_cmd_case_create.sql`), following the same command pipeline as every other command (authorize, idempotency, structured refusals). New permissions `case.create` (denials, appeals, billing, ar, sup, mgr) and `deposit.create` (cash, fin, mgr) in `backend/seed/010_reference.sql`
+- New "+ New case" button (Workqueues tab) opens a real form — patient name/DOB, payer, one service line, an optional diagnosis — and calls `api.cmd_case_create` to originate a real patient, claim and case against the live backend, instead of every case only ever coming from the seed script
+- New "Simulate payer response" form (replaces `ACT.post`'s hardcoded-amount assumption for self-created cases) lets a user enter what the 835 paid, adjusted, denied; a denied amount creates a real `app.denial` row (via `remittance.post`, unchanged) and the new case automatically calls `denial.triage` + `denial.confirm_path`, so the case moves straight into the existing, unmodified recovery loop (draft → approve → file → payer decision → post → allocate → close)
+- `ACT.alloc` now auto-creates an ad-hoc deposit (via `deposit.create`) when none exists for a payer, instead of refusing outright — this was a known, explicitly flagged gap ("deposit intake is not modeled as a command") and now also benefits any of the original 15 cases that reach this state
+- Added a `PATH.pending` / stage-0 fallback (`tabFor`, `nextAct`, `pbd`) so a case with no denial yet renders safely across every tab instead of assuming a denial/path already exists, which every previously-seeded case always had
+- Verified live end-to-end: created a case, released it, denied it, triaged and confirmed the path automatically, drafted and filed an appeal — all against the real Supabase backend, confirmed by direct SQL (`api.case_stage()` progressing 0 to 5 with real `app.denial`/`app.appeal`/`app.remittance` rows)
+- Known limitation: a case created this way lives in `CASE_ID`/`CL`/`IDS` (in-memory, per session) — it disappears from the visible list on a full page reload, since there is still no "list my cases" query; the backend data itself is real and persists
+- Rollback: `git checkout v8.3.1 -- index.html`; the new backend commands can stay (additive, unused if the frontend rolls back)
+
 ## v8.3.1 - Fix: invisible wordmark on the sign-in page
 - The sign-in page's "Meridian AI" title and "Sign in" subtitle used `.brandrow`'s default inverse (white) text color, meant for dark backgrounds like the sidebar and the dark hero — on the sign-in page's light background, the name was unreadable
 - New `.lp-brand` class scopes that one brandrow to the normal light-background text colors (`--fg` / `--fg3`); the sidebar, landing hero and role-picker brandrows are unaffected

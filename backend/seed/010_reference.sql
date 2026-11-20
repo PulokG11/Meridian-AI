@@ -87,7 +87,8 @@ begin
     ('patient_payment.apply','Apply a patient payment'), ('patient_dispute.open','Open a patient dispute'),
     ('patient_dispute.resolve','Resolve a patient dispute'),
     ('writeoff.request','Request a write-off'), ('writeoff.post','Post an approved write-off'),
-    ('case.close','Close a case'), ('case.reopen','Reopen a closed case')
+    ('case.close','Close a case'), ('case.reopen','Reopen a closed case'),
+    ('case.create','Originate a new patient, claim and case'), ('deposit.create','Record an ad-hoc bank deposit')
   ) as x(permission_key, description)
   where not exists (select 1 from app.permission p where p.permission_key = x.permission_key);
 
@@ -131,7 +132,11 @@ begin
     ('sup','ai.review'),('mgr','ai.review'),('comp','ai.review'),('pl2','ai.review'),
     -- payer-portal commands
     ('py4','appeal.record_decision'),('py5','appeal.record_decision'),
-    ('py1','records_request.decide'),('py4','records_request.decide')
+    ('py1','records_request.decide'),('py4','records_request.decide'),
+    -- newcase: originate a case (the whole Loop 3 staff group, same set as denial.triage/appeal.draft)
+    ('denials','case.create'),('appeals','case.create'),('billing','case.create'),('ar','case.create'),('sup','case.create'),('mgr','case.create'),
+    -- deposit.create: ad-hoc deposits (same set as deposit.allocate)
+    ('cash','deposit.create'),('fin','deposit.create'),('mgr','deposit.create')
   ) as g(role_key, permission_key)
   where not exists (select 1 from app.role_permission rp where rp.role_key = g.role_key and rp.permission_key = g.permission_key);
 
